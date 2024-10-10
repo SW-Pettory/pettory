@@ -1,6 +1,5 @@
 package com.pettory.pettory.config;
 
-import com.pettory.pettory.chat.handler.ChatHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
