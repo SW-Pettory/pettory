@@ -55,7 +55,7 @@ public class User {
     @Schema(description = "회원상태")
     // DB의 기본값 설정이 잘 동작하지 않는 경우가 발생하여 JPA로 기본값을 명시적으로 처리
     @Enumerated(EnumType.STRING)
-    private UserState userState = UserState.ACTIVE; // 회원상태  // 기본값 설정
+    private UserState userState = UserState.UNVERIFIED; // 회원상태  // 기본값 설정
 
     @Schema(description = "회원역할")
     @Enumerated(EnumType.STRING)
@@ -100,6 +100,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<FeedingRecord> feedingRecords = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<EmailVerification> emailVerifications = new ArrayList<>();
+
     // 생성자는 private으로 설정하여 외부에서의 호출 방지
     private User(String userEmail, String userPassword, String userNickname, String userName, LocalDate userBirth) {
         this.userEmail = userEmail;
@@ -139,6 +142,11 @@ public class User {
     // 회원의 비밀번호를 수정하는 메소드
     public void updatePassword(String encodedUserPassword) {
         this.userPassword = encodedUserPassword;
+    }
+
+    // 회원의 상태를 ACTIVE 로 바꾸는 메소드
+    public void updateUserAsActive() {
+        this.userState = UserState.ACTIVE;
     }
 
 

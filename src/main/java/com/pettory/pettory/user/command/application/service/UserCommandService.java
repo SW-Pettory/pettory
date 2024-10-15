@@ -15,6 +15,7 @@ import com.pettory.pettory.user.command.application.dto.ChangePasswordRequest;
 import com.pettory.pettory.user.command.application.dto.FindPasswordRequest;
 import com.pettory.pettory.user.command.application.dto.UserDeleteRequest;
 import com.pettory.pettory.user.command.application.dto.UserRegisterRequest;
+import com.pettory.pettory.user.command.domain.aggregate.EmailVerification;
 import com.pettory.pettory.user.command.domain.aggregate.User;
 import com.pettory.pettory.user.command.domain.aggregate.UserState;
 import com.pettory.pettory.user.command.domain.repository.UserRepository;
@@ -44,6 +45,7 @@ public class UserCommandService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final VerifyCommandService verifyCommandService;
 
     // 회원가입
     @Transactional
@@ -59,13 +61,16 @@ public class UserCommandService implements UserDetailsService {
             throw new AlreadyRegisterException("이미 존재하는 닉네임입니다.");
         }
 
-
         User newUser = UserMapper.toEntity(userRegisterRequest);
         newUser.encryptPassword(passwordEncoder.encode(newUser.getUserPassword())); // newUser의 plain pw를 암호화
 
-        // repository에 저장
 
+        // repository 에 저장
         User savedUser = userRepository.save(newUser);
+
+        // 이메일 인증 코드 전송
+        verifyCommandService.sendVerifyCodeByUserUserEmail(savedUser.getUserEmail());
+
         return savedUser.getUserId();
     }
 
@@ -129,57 +134,38 @@ public class UserCommandService implements UserDetailsService {
 
     }
 
-    // 커스텀 로그인 필터 동작 시 인증 매니저에 의해 자동으로 호출되는 메소드
-    @Override
-    public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-        // 인증 토큰에 담긴 userId가 메소드로 넘어오므로 해당 값을 기준으로 DB에서 조회한다.
-        User loginUser = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new NotFoundException(userEmail + "가 존재하지 않습니다."));
+    // 비밀번호 찾기 - 새로운 비밀번호 전송
+    @Transactional
+    public void getNewPasswords(FindPasswordRequest findPasswordRequest) {
 
+        try {
+            User user = userRepository.findByUserEmail(findPasswordRequest.getUserEmail())
+                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + loginUser.getUserRole().name()));
+            // 임시 비밀번호 생성
+            String tempPassword = VerifyUtil.generateTempPassword();
+            user.updatePassword(passwordEncoder.encode(tempPassword));
 
-        // id(email), pw, 권한
-        return new org.springframework.security.core.userdetails.User(loginUser.getUserEmail(), loginUser.getUserPassword(), grantedAuthorities);
+            // 이메일 발송
+            emailService.sendEmail(
+                    user.getUserEmail(),
+                    "펫토리 임시 비밀번호 안내",
+                    user.getUserNickname() + " 님의 임시 비밀번호는.\n" + tempPassword + "\n입니다. 로그인 후 반드시 비밀번호를 변경하세요."
+            );
+
+            // 변경된 비밀번호 저장
+            userRepository.save(user);
+        } catch (MailException e) {
+            // 이메일 전송 실패 시 예외 처리
+            // 예를 들어, 로그를 남기고 사용자에게 메시지를 반환할 수 있음
+            log.error("이메일 전송 실패: " + e.getMessage());
+            throw new com.pettory.pettory.exception.MailException("이메일 전송 중 오류가 발생했습니다. 다시 시도해 주세요.");
+        } catch (Exception e) {
+            // 그 외의 예외 처리
+            log.error("예상치 못한 오류 발생: " + e.getMessage());
+            throw new RuntimeException("시스템 오류가 발생했습니다. 관리자에게 문의하세요.");
+        }
     }
-
-    // 새로운 비밀번호 전송
-//    @Transactional
-//    public void getNewPasswords(FindPasswordRequest findPasswordRequest) {
-//
-//        try {
-//            User user = userRepository.findByUserEmail(findPasswordRequest.getUserEmail())
-//                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
-//
-//            // 임시 비밀번호 생성
-//            String tempPassword = VerifyUtil.generateTempPassword();
-//            user.updatePassword(passwordEncoder.encode(tempPassword));
-//
-//            // 이메일 발송
-//            emailService.sendEmail(
-//                    user.getUserEmail(),
-//                    "펫토리 임시 비밀번호 안내",
-//                    user.getUserNickname() + " 님의 임시 비밀번호는.\n" + tempPassword + "\n입니다. 로그인 후 반드시 비밀번호를 변경하세요."
-//            );
-//
-//            // 변경된 비밀번호 저장
-//            userRepository.save(user);
-//        } catch (NotFoundException e) {
-//            // 사용자가 없는 경우 예외 처리
-//            // 필요에 따라 로깅을 추가하거나 사용자에게 적절한 메시지를 반환
-//            throw new NotFoundException("회원을 찾을 수 없습니다.");
-//        } catch (MailException e) {
-//            // 이메일 전송 실패 시 예외 처리
-//            // 예를 들어, 로그를 남기고 사용자에게 메시지를 반환할 수 있음
-//            log.error("이메일 전송 실패: " + e.getMessage());
-//            throw new com.pettory.pettory.exception.MailException("이메일 전송 중 오류가 발생했습니다. 다시 시도해 주세요.");
-//        } catch (Exception e) {
-//            // 그 외의 예외 처리
-//            log.error("예상치 못한 오류 발생: " + e.getMessage());
-//            throw new RuntimeException("시스템 오류가 발생했습니다. 관리자에게 문의하세요.");
-//        }
-//    }
 
     // 비밀번호 변경
     @Transactional
@@ -203,4 +189,18 @@ public class UserCommandService implements UserDetailsService {
         return changedUser.getUserId();
     }
 
+    // 커스텀 로그인 필터 동작 시 인증 매니저에 의해 자동으로 호출되는 메소드
+    @Override
+    public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
+        // 인증 토큰에 담긴 userId가 메소드로 넘어오므로 해당 값을 기준으로 DB에서 조회한다.
+        User loginUser = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException(userEmail + "가 존재하지 않습니다."));
+
+
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + loginUser.getUserRole().name()));
+
+        // id(email), pw, 권한
+        return new org.springframework.security.core.userdetails.User(loginUser.getUserEmail(), loginUser.getUserPassword(), grantedAuthorities);
+    }
 }

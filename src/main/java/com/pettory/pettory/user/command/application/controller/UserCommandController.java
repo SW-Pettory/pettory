@@ -29,7 +29,6 @@ public class UserCommandController {
     @PostMapping
     public ResponseEntity<CommonResponseDTO> registerUser(@Valid @RequestBody @Schema UserRegisterRequest userRegisterRequest) {
 
-
         Long newUserId = userCommandService.registerUser(userRegisterRequest);
 
         // 회원가입 성공 시 응답
@@ -52,14 +51,14 @@ public class UserCommandController {
 //    }
 
     // 비밀번호 찾기
-//    @PostMapping("/passwords")
-//    public ResponseEntity<CommonResponseDTO> findPasswords(@RequestBody FindPasswordRequest findPasswordRequest) {
-//
-//        userCommandService.getNewPasswords(findPasswordRequest);
-//
-//        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "새로운 비밀번호 발송 성공", null);
-//        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-//    }
+    @PostMapping("/passwords")
+    public ResponseEntity<CommonResponseDTO> findPasswords(@RequestBody FindPasswordRequest findPasswordRequest) {
+
+        userCommandService.getNewPasswords(findPasswordRequest);
+
+        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "새로운 비밀번호 발송 성공", null);
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 
     @Operation(summary = "회원 비밀번호 변경", description = "회원의 비밀번호를 변경한다.")
     // 비밀번호 변경
