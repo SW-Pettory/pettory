@@ -34,16 +34,7 @@ public class JointShoppingGroupRequest {
     @NotNull
     private final Integer jointShoppingParticipationMaximumCount;
 
-    private final String hostCourierCode;
-
-    private final String hostInvoiceNum;
-
-    @Schema(example = "5")
-    @NotNull
-    private final Long jointShoppingCategoryNum;
-
-    @Schema(example = "3")
-    @NotNull
-    private final Long userId;
-
+    @Schema(example = "전자제품")
+    @NotBlank
+    private final String jointShoppingCategory;
 }

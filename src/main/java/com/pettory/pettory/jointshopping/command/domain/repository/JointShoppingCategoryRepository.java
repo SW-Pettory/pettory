@@ -1,5 +1,6 @@
 package com.pettory.pettory.jointshopping.command.domain.repository;
 
+import com.pettory.pettory.board.command.domain.aggregate.Category;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingCategory;
 
 import java.util.Optional;
@@ -10,4 +11,6 @@ public interface JointShoppingCategoryRepository {
     Optional<JointShoppingCategory> findById(Long jointShoppingCategoryNum);
 
     void deleteById(Long jointShoppingCategoryNum);
+
+    JointShoppingCategory findByJointShoppingCategoryTitle(String categoryTitle);
 }

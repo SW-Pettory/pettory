@@ -1,5 +1,6 @@
 package com.pettory.pettory.jointshopping.command.domain.repository;
 
+import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationUser;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface JointShoppingParticipationRepository {
 
     Optional<JointShoppingParticipationUser> findById(Long participationNum);
 
-    List<JointShoppingParticipationUser> findByJointShoppingGroupNum(Long jointShoppingGroupNum);
+    List<JointShoppingParticipationUser> findByJointShoppingGroup(JointShoppingGroup jointShoppingGroup);
 
-    List<JointShoppingParticipationUser> findByProductsReceiptYnTrue();
+    List<JointShoppingParticipationUser> findByJointShoppingGroupAndProductsReceiptYnTrue(JointShoppingGroup jointShoppingGroup);
 }

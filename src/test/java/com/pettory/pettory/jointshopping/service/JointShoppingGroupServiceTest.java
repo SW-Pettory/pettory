@@ -2,7 +2,6 @@ package com.pettory.pettory.jointshopping.service;
 
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingDeliveryInfoRequest;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingGroupRequest;
-import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingGroupUserRequest;
 import com.pettory.pettory.jointshopping.command.application.service.JointShoppingGroupApplicationService;
 import com.pettory.pettory.jointshopping.query.dto.*;
 import com.pettory.pettory.jointshopping.query.service.JointShoppingGroupQueryService;
@@ -97,20 +96,8 @@ public class JointShoppingGroupServiceTest {
                         100000,
                         1,
                         1,
-                        null,
-                        null,
-                        2L,
-                        4L,
+                        "전자제품",
                         null
-                )
-        );
-    }
-
-    private static Stream<Arguments> getInsertJointShoppingGroupUser() {
-        return Stream.of(
-                Arguments.of(
-                        8L,
-                        6L
                 )
         );
     }
@@ -131,8 +118,8 @@ public class JointShoppingGroupServiceTest {
     void testCreateGroup(
             String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingInfo,
             Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount,
-            Integer jointShoppingParticipationMaximumCount, String hostCourierCode, String hostInvoiceNum,
-            Long jointShoppingCategoryNum, Long userId, MultipartFile productImg
+            Integer jointShoppingParticipationMaximumCount,
+            String jointShoppingCategory, MultipartFile productImg
     ) {
 
         JointShoppingGroupRequest jointShoppingGroupRequest = new JointShoppingGroupRequest(
@@ -142,14 +129,11 @@ public class JointShoppingGroupServiceTest {
                 jointShoppingCost,
                 jointShoppingGroupMaximumCount,
                 jointShoppingParticipationMaximumCount,
-                hostCourierCode,
-                hostInvoiceNum,
-                jointShoppingCategoryNum,
-                userId
+                jointShoppingCategory
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.createGroup(jointShoppingGroupRequest, productImg)
+                () -> jointShoppingGroupApplicationService.createGroup("userEmail", jointShoppingGroupRequest, productImg)
         );
     }
 
@@ -160,8 +144,8 @@ public class JointShoppingGroupServiceTest {
             Long jointShoppingGroupNum,
             String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingInfo,
             Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount,
-            Integer jointShoppingParticipationMaximumCount, String hostCourierCode, String hostInvoiceNum,
-            Long jointShoppingCategoryNum, Long userId, MultipartFile productImg
+            Integer jointShoppingParticipationMaximumCount,
+            String jointShoppingCategory,MultipartFile productImg
     ) {
 
         JointShoppingGroupRequest jointShoppingGroupRequest = new JointShoppingGroupRequest(
@@ -171,14 +155,11 @@ public class JointShoppingGroupServiceTest {
                 jointShoppingCost,
                 jointShoppingGroupMaximumCount,
                 jointShoppingParticipationMaximumCount,
-                hostCourierCode,
-                hostInvoiceNum,
-                jointShoppingCategoryNum,
-                userId
+                jointShoppingCategory
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.updateGroup(jointShoppingGroupNum, jointShoppingGroupRequest, productImg)
+                () -> jointShoppingGroupApplicationService.updateGroup("userEmail", jointShoppingGroupNum, jointShoppingGroupRequest, productImg)
         );
     }
 
@@ -186,24 +167,15 @@ public class JointShoppingGroupServiceTest {
     @Test
     void testDeleteGroup() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.deleteGroup(5L)
+                () -> jointShoppingGroupApplicationService.deleteGroup( "userEmail" , 5L)
         );
     }
 
     /* 공동구매모임 참가(모임 사용자 등록) 테스트 */
-    @ParameterizedTest
-    @MethodSource("getInsertJointShoppingGroupUser")
-    void testInsertGroupUser(
-            Long jointShoppingGroupNum, Long userId
-    ) {
-
-        JointShoppingGroupUserRequest jointShoppingGroupUserRequest = new JointShoppingGroupUserRequest(
-                jointShoppingGroupNum,
-                userId
-        );
-
+    @Test
+    void testInsertGroupUser() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.insertGroupUser(jointShoppingGroupUserRequest)
+                () -> jointShoppingGroupApplicationService.insertGroupUser("userEmail", 5L)
         );
     }
 
@@ -211,7 +183,7 @@ public class JointShoppingGroupServiceTest {
     @Test
     void testExitGroupUser() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.exitGroupUser(14L)
+                () -> jointShoppingGroupApplicationService.exitGroupUser("userEmail", 14L)
         );
     }
 
@@ -219,7 +191,7 @@ public class JointShoppingGroupServiceTest {
     @Test
     void testWithdrawalGroupUser() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.withdrawalGroupUser(15L)
+                () -> jointShoppingGroupApplicationService.withdrawalGroupUser("userEmail", 15L)
         );
     }
 
@@ -234,7 +206,7 @@ public class JointShoppingGroupServiceTest {
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.updateDeliveryInfo(jointShoppingGroupNum, jointShoppingDeliveryInfoRequest)
+                () -> jointShoppingGroupApplicationService.updateDeliveryInfo("userEmail", jointShoppingGroupNum, jointShoppingDeliveryInfoRequest)
         );
     }
 

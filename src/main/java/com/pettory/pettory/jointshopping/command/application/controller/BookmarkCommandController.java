@@ -1,20 +1,17 @@
 package com.pettory.pettory.jointshopping.command.application.controller;
 
 import com.pettory.pettory.common.CommonResponseDTO;
-import com.pettory.pettory.jointshopping.command.application.dto.BookmarkRequest;
 import com.pettory.pettory.jointshopping.command.application.service.BookmarkApplicationService;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.Bookmark;
+import com.pettory.pettory.security.util.UserSecurity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 @Tag(name = "즐겨찾기", description = "즐겨찾기 등록/삭제/조회")
 @RestController
@@ -28,9 +25,11 @@ public class BookmarkCommandController {
     @ApiResponse(responseCode = "201", description = "즐겨찾기 등록 성공")
     @PostMapping("/bookmarks")
     public ResponseEntity<CommonResponseDTO> createBookmark(
-            @RequestBody @Valid BookmarkRequest bookmarkRequest
+            @RequestBody Long jointShoppingGroupNum
     ) {
-        Bookmark bookmark = bookmarkApplicationService.createBookmark(bookmarkRequest);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        Bookmark bookmark = bookmarkApplicationService.createBookmark(currentUserEmail, jointShoppingGroupNum);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "즐겨찾기 등록 성공", bookmark);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
@@ -42,8 +41,9 @@ public class BookmarkCommandController {
     public ResponseEntity<CommonResponseDTO> deleteBookmark(
             @PathVariable @Schema(example = "3") final Long bookmarkNum
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        bookmarkApplicationService.deleteBookmark(bookmarkNum);
+        bookmarkApplicationService.deleteBookmark(currentUserEmail, bookmarkNum);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "즐겨찾기 삭제 성공", bookmarkNum);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);

@@ -1,11 +1,13 @@
 package com.pettory.pettory.jointshopping.command.mapper;
 
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingGroupRequest;
+import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingCategory;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
+import com.pettory.pettory.user.command.domain.aggregate.User;
 
 public class JointShoppingGroupMapper {
 
-    public static JointShoppingGroup toEntity(JointShoppingGroupRequest groupRequest, String imageDir) {
+    public static JointShoppingGroup toEntity(JointShoppingGroupRequest groupRequest, String imageDir, User user, JointShoppingCategory category) {
         return JointShoppingGroup.create(
                 groupRequest.getJointShoppingGroupName(),
                 groupRequest.getJointShoppingProducts(),
@@ -14,10 +16,8 @@ public class JointShoppingGroupMapper {
                 groupRequest.getJointShoppingCost(),
                 groupRequest.getJointShoppingGroupMaximumCount(),
                 groupRequest.getJointShoppingParticipationMaximumCount(),
-                groupRequest.getHostCourierCode(),
-                groupRequest.getHostInvoiceNum(),
-                groupRequest.getJointShoppingCategoryNum(),
-                groupRequest.getUserId()
+                category,
+                user
         );
     }
 }

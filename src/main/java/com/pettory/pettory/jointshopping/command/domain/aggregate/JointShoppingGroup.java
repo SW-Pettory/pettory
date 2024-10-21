@@ -1,6 +1,7 @@
 package com.pettory.pettory.jointshopping.command.domain.aggregate;
 
 import com.pettory.pettory.exception.BadJoinException;
+import com.pettory.pettory.user.command.domain.aggregate.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,10 +45,16 @@ public class JointShoppingGroup {
     @LastModifiedDate
     private LocalDateTime jointShoppingGroupUpdateDatetime;
     private LocalDateTime jointShoppingGroupDeleteDatetime;
-    private Long jointShoppingCategoryNum;
-    private Long userId;
 
-    private JointShoppingGroup(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingProductsFileDirectory, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount, String hostCourierCode, String hostInvoiceNum, Long jointShoppingCategoryNum, Long userId) {
+    @ManyToOne
+    @JoinColumn(name = "joint_shopping_category_num", nullable = false)
+    JointShoppingCategory jointShoppingCategory;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
+    private JointShoppingGroup(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingProductsFileDirectory, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount,JointShoppingCategory jointShoppingCategory, User user) {
         this.jointShoppingGroupName = jointShoppingGroupName;
         this.jointShoppingProducts = jointShoppingProducts;
         this.jointShoppingProductsFileDirectory = jointShoppingProductsFileDirectory;
@@ -55,15 +62,13 @@ public class JointShoppingGroup {
         this.jointShoppingCost = jointShoppingCost;
         this.jointShoppingGroupMaximumCount = jointShoppingGroupMaximumCount;
         this.jointShoppingParticipationMaximumCount = jointShoppingParticipationMaximumCount;
-        this.hostCourierCode = hostCourierCode;
-        this.hostInvoiceNum = hostInvoiceNum;
-        this.jointShoppingCategoryNum = jointShoppingCategoryNum;
-        this.userId = userId;
+        this.jointShoppingCategory = jointShoppingCategory;
+        this.user = user;
     }
 
     // JointShoppingGroup 생성 메소드
-    public static JointShoppingGroup create(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingProductsFileDirectory, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount,String hostCourierCode, String hostInvoiceNum, Long jointShoppingCategoryNum, Long userId){
-        return new JointShoppingGroup(jointShoppingGroupName, jointShoppingProducts, jointShoppingProductsFileDirectory, jointShoppingInfo, jointShoppingCost, jointShoppingGroupMaximumCount, jointShoppingParticipationMaximumCount, hostCourierCode, hostInvoiceNum, jointShoppingCategoryNum, userId);
+    public static JointShoppingGroup create(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingProductsFileDirectory, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount, JointShoppingCategory jointShoppingCategory, User user){
+        return new JointShoppingGroup(jointShoppingGroupName, jointShoppingProducts, jointShoppingProductsFileDirectory, jointShoppingInfo, jointShoppingCost, jointShoppingGroupMaximumCount, jointShoppingParticipationMaximumCount, jointShoppingCategory, user);
     }
 
     // jointShoppingProductsFileDirectory 변경 메소드
@@ -81,17 +86,15 @@ public class JointShoppingGroup {
     }
 
     // 다른 필드를 변경하는 메소드
-    public void update(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount, String hostCourierCode, String hostInvoiceNum, Long jointShoppingCategoryNum, Long userId) {
+    public void update(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount, JointShoppingCategory jointShoppingCategory, User user) {
         this.jointShoppingGroupName = jointShoppingGroupName;
         this.jointShoppingProducts = jointShoppingProducts;
         this.jointShoppingInfo = jointShoppingInfo;
         this.jointShoppingCost = jointShoppingCost;
         this.jointShoppingGroupMaximumCount = jointShoppingGroupMaximumCount;
         this.jointShoppingParticipationMaximumCount = jointShoppingParticipationMaximumCount;
-        this.hostCourierCode = hostCourierCode;
-        this.hostInvoiceNum = hostInvoiceNum;
-        this.jointShoppingCategoryNum = jointShoppingCategoryNum;
-        this.userId = userId;
+        this.jointShoppingCategory = jointShoppingCategory;
+        this.user = user;
     }
 
     /* 배송 정보를 변경하는 메소드 */

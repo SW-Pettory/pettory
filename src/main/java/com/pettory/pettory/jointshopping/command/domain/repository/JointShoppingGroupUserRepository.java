@@ -1,6 +1,8 @@
 package com.pettory.pettory.jointshopping.command.domain.repository;
 
+import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroupUser;
+import com.pettory.pettory.user.command.domain.aggregate.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +18,7 @@ public interface JointShoppingGroupUserRepository {
 
     JointShoppingGroupUser saveAndFlush(JointShoppingGroupUser newJointShoppingGroupUser);
 
-    List<JointShoppingGroupUser> findByJointShoppingGroupNumAndUserIdAndResignYnTrue(Long jointShoppingGroupNum, Long userId);
+    List<JointShoppingGroupUser> findByJointShoppingGroup(JointShoppingGroup jointShoppingGroup);
 
-    List<JointShoppingGroupUser> findByJointShoppingGroupNum(Long jointShoppingGroupNum);
-
-
+    List<JointShoppingGroupUser> findByJointShoppingGroupAndUserAndResignYnTrue(JointShoppingGroup jointShoppingGroup, User user);
 }

@@ -6,6 +6,7 @@ import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingGr
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingParticipationRequest;
 import com.pettory.pettory.jointshopping.command.application.service.JointShoppingParticipationApplicationService;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationUser;
+import com.pettory.pettory.security.util.UserSecurity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,7 +35,9 @@ public class JointShoppingParticipationCommandController {
     public ResponseEntity<CommonResponseDTO> createParticipation(
             @RequestBody @Valid JointShoppingParticipationRequest participationRequest
     ) {
-        JointShoppingParticipationUser jointShoppingParticipationUser = jointShoppingParticipationApplicationService.createParticipation(participationRequest);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        JointShoppingParticipationUser jointShoppingParticipationUser = jointShoppingParticipationApplicationService.createParticipation(currentUserEmail, participationRequest);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "공동구매 참가 성공", jointShoppingParticipationUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
@@ -46,8 +49,9 @@ public class JointShoppingParticipationCommandController {
     public ResponseEntity<CommonResponseDTO> deleteParticipation(
             @PathVariable @Schema(example = "11") final Long participationNum
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        jointShoppingParticipationApplicationService.deleteParticipation(participationNum);
+        jointShoppingParticipationApplicationService.deleteParticipation(currentUserEmail, participationNum);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매 참가 취소 성공", participationNum);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
@@ -60,8 +64,9 @@ public class JointShoppingParticipationCommandController {
             @PathVariable @Schema(example = "12") final Long participationNum,
             @RequestBody @Valid JointShoppingDeliveryInfoRequest jointShoppingDeliveryInfoRequest
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        jointShoppingParticipationApplicationService.updateDeliveryInfo(participationNum, jointShoppingDeliveryInfoRequest);
+        jointShoppingParticipationApplicationService.updateDeliveryInfo(currentUserEmail, participationNum, jointShoppingDeliveryInfoRequest);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "공동구매 참가자 물품 배송 정보 등록 성공", jointShoppingDeliveryInfoRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
@@ -73,8 +78,9 @@ public class JointShoppingParticipationCommandController {
     public ResponseEntity<CommonResponseDTO> updateProductsReceipt(
             @PathVariable @Schema(example = "12") final Long participationNum
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        jointShoppingParticipationApplicationService.updateProductsReceipt(participationNum);
+        jointShoppingParticipationApplicationService.updateProductsReceipt(currentUserEmail, participationNum);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "공동구매 참가자 물품 수령으로 변경 성공", participationNum);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
