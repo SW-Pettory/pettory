@@ -1,6 +1,9 @@
 package com.pettory.pettory.walkingGroupApplication.command.application.service;
 
 import com.pettory.pettory.exception.NotFoundException;
+import com.pettory.pettory.exception.UnauthorizedException;
+import com.pettory.pettory.user.command.domain.aggregate.User;
+import com.pettory.pettory.user.command.domain.repository.UserRepository;
 import com.pettory.pettory.walkingGroupApplication.command.application.dto.RegisterWalkingGroupUpdateRequest;
 import com.pettory.pettory.walkingGroupApplication.command.application.dto.WalkingGroupApplicationRequest;
 import com.pettory.pettory.walkingGroupApplication.command.domain.aggregate.RegisterWalkingGroup;
@@ -19,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterWalkingGroupCommandService {
 
     private final RegisterWalkingGroupRepository registerWalkingGroupRepository;
-
     private final WalkingGroupApplicationRepository walkingGroupApplicationRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void updateRegisterWalkingGroup(int registerWalkingGroupId, RegisterWalkingGroupUpdateRequest registerWalkingGroupUpdateRequest) {
@@ -36,7 +39,16 @@ public class RegisterWalkingGroupCommandService {
     }
 
     @Transactional
-    public void deleteRegisterWalkingGroup(int registerWalkingGroupId) {
+    public void deleteRegisterWalkingGroup(String userEmail, int registerWalkingGroupId) {
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        RegisterWalkingGroup registerWalkingGroup = registerWalkingGroupRepository.findById(registerWalkingGroupId)
+                .orElseThrow(() -> new NotFoundException("가입한 산책 모임을 찾을 수 없습니다."));
+
+        if (registerWalkingGroup.getUserId() != user.getUserId()) {
+            throw new UnauthorizedException("해당 가입한 산책 모임에서 탈퇴할 권한이 없습니다.");
+        }
 
         registerWalkingGroupRepository.deleteById(registerWalkingGroupId);
 
