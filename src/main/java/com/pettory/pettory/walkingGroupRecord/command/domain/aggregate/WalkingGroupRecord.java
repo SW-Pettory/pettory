@@ -1,5 +1,6 @@
 package com.pettory.pettory.walkingGroupRecord.command.domain.aggregate;
 
+import com.pettory.pettory.user.command.domain.aggregate.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "walking_group_record")
@@ -36,7 +39,7 @@ public class WalkingGroupRecord {
     private LocalDateTime walkingGroupRecordUpdateDatetime;
     private LocalDateTime walkingGroupRecordDeleteDatetime;
     @Enumerated(EnumType.STRING)
-    private WalkingGroupRecordState walkingGroupRecordState = WalkingGroupRecordState.COMPLETE;
+    private WalkingGroupRecordState walkingGroupRecordState = WalkingGroupRecordState.ACTIVE;
     private int walkingGroupId;
 
     private WalkingGroupRecord(
