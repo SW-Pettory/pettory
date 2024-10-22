@@ -6,6 +6,7 @@
 
     <select id="selectWalkingGroupApplications" resultType="com.pettory.pettory.walkingGroupApplication.query.dto.WalkingGroupApplicationDTO">
         SELECT
+            wa.walking_group_id,
             wa.walking_group_application_id,
             u1.user_name,
             wg.walking_group_name,

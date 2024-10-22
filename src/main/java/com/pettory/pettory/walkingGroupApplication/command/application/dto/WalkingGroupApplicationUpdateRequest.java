@@ -10,9 +10,9 @@ public class WalkingGroupApplicationUpdateRequest {
 
     @NotNull
     @Schema(description = "산책모임승인상태", example = "REFUSAL")
-    private  String walkingGroupApprovalState;
+    private String walkingGroupApprovalState;
 
-    public WalkingGroupApplicationUpdateRequest(String walkingGroupApprovalState) {
-        this.walkingGroupApprovalState = walkingGroupApprovalState;
-    }
+//    public WalkingGroupApplicationUpdateRequest(String walkingGroupApprovalState) {
+//        this.walkingGroupApprovalState = walkingGroupApprovalState;
+//    }
 }

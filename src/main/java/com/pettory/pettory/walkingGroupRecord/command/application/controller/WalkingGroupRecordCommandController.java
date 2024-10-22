@@ -1,6 +1,7 @@
 package com.pettory.pettory.walkingGroupRecord.command.application.controller;
 
 import com.pettory.pettory.common.CommonResponseDTO;
+import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.walkingGroupRecord.command.application.dto.WalkingGroupRecordCreateRequest;
 import com.pettory.pettory.walkingGroupRecord.command.application.dto.WalkingGroupRecordUpdateRequest;
 import com.pettory.pettory.walkingGroupRecord.command.application.service.WalkingGroupRecordCommandService;
@@ -28,8 +29,10 @@ public class WalkingGroupRecordCommandController {
             @RequestBody @Valid WalkingGroupRecordCreateRequest walkingGroupRecordRequest
     ) {
 
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
         int walkingGroupRecordId = walkingGroupRecordCommandService.createWalkingGroupRecord(
-                walkingGroupRecordRequest
+                currentUserEmail, walkingGroupRecordRequest
         );
 
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "산책 모임 기록 작성 성공", walkingGroupRecordId);
@@ -43,7 +46,9 @@ public class WalkingGroupRecordCommandController {
             @RequestBody @Valid WalkingGroupRecordUpdateRequest walkingGroupRequest
     ) {
 
-        walkingGroupRecordCommandService.updateWalkingGroupRecord(walkingGroupRecordId, walkingGroupRequest);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        walkingGroupRecordCommandService.updateWalkingGroupRecord(currentUserEmail, walkingGroupRecordId, walkingGroupRequest);
 
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "산책 모임 기록 수정 성공", walkingGroupRequest);
         return ResponseEntity.ok(successResponse);
@@ -53,8 +58,9 @@ public class WalkingGroupRecordCommandController {
     @Operation(summary = "산책모임기록삭제", description = "산책모임의 산책기록을 삭제한다.")
     @DeleteMapping("/{walkingGroupRecordId}")
     public ResponseEntity<CommonResponseDTO> deleteWalkingGroupRecord(@PathVariable int walkingGroupRecordId) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        walkingGroupRecordCommandService.deleteWalkingGroupRecord(walkingGroupRecordId);
+        walkingGroupRecordCommandService.deleteWalkingGroupRecord(currentUserEmail, walkingGroupRecordId);
 
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "산책 모임 기록 삭제", null);
         return ResponseEntity.ok(successResponse);
