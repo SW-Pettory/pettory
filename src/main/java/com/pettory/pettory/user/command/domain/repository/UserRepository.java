@@ -20,4 +20,10 @@ public interface UserRepository {
     // 회원id로 회원의 가족id를 찾는 메소드
     @Query("SELECT u.family.familyId FROM User u WHERE u.userId = :userId")
     Optional<Long> findFamilyIdByUserId(@Param("userId") Long userId);
+
+    Optional<User> findByUserNickname(String userNickname);
+
+    boolean existsByUserEmail(String userEmail);
+
+    boolean existsByUserNickname(String userNickname);
 }

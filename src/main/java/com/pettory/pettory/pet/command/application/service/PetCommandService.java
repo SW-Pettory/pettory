@@ -1,11 +1,14 @@
 package com.pettory.pettory.pet.command.application.service;
 
+import com.pettory.pettory.exception.AlreadyDeletedException;
 import com.pettory.pettory.exception.NotFoundException;
 import com.pettory.pettory.exception.UnauthorizedException;
+import com.pettory.pettory.feedingRecord.command.domain.aggregate.FeedingRecordState;
 import com.pettory.pettory.pet.command.application.dto.PetCreateRequest;
 import com.pettory.pettory.pet.command.application.dto.PetUpdateRequest;
 import com.pettory.pettory.pet.command.domain.aggregate.Pet;
 import com.pettory.pettory.pet.command.domain.aggregate.PetAccess;
+import com.pettory.pettory.pet.command.domain.aggregate.PetState;
 import com.pettory.pettory.pet.command.domain.repository.PetAccessRepository;
 import com.pettory.pettory.pet.command.domain.repository.PetRepository;
 import com.pettory.pettory.pet.command.infrastructure.repository.JpaPetRepository;
@@ -14,11 +17,13 @@ import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.user.command.domain.aggregate.User;
 import com.pettory.pettory.user.command.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PetCommandService {
 
     private final PetRepository petRepository;
@@ -70,16 +75,17 @@ public class PetCommandService {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException("반려동물이 존재하지 않습니다."));
 
-        // 해당 반려동물을 현재 회원이 등록한 것이 아니라면
+//        if (!pet.getUser().getUserId().equals(user.getUserId())) {
+//            // 해당 반려동물을 가족 구성원이 등록한 것인지 확인
+//            if (user.getFamily() == null
+//                    || pet.getFamily() == null
+//                    || !user.getFamily().getFamilyId().equals(pet.getFamily().getFamilyId())) {
+//                throw new UnauthorizedException("해당 반려동물에 접근할 권한이 없습니다.");
+//            }
+//        }
+
         if (!pet.getUser().getUserId().equals(user.getUserId())) {
-            // 해당 반려동물을 가족 구성원이 등록한 것인지 확인
-            if (user.getFamily() != null
-                    && pet.getFamily() != null
-                    && user.getFamily().getFamilyId().equals(pet.getFamily().getFamilyId())) {
-                throw new UnauthorizedException("해당 반려동물을 수정할 권한이 없습니다.");
-            }
-            // 그 외의 경우, 반려동물이 존재하지 않는 것으로 처리
-            throw new NotFoundException("반려동물이 존재하지 않습니다.");
+            throw new UnauthorizedException("해당 반려동물 정보를 수정할 권한이 없습니다.");
         }
 
         // 반려동물 정보 수정
@@ -110,16 +116,22 @@ public class PetCommandService {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException("반려동물이 존재하지 않습니다."));
 
-        // 해당 반려동물을 현재 회원이 등록한 것이 아니라면
+//        if (!pet.getUser().getUserId().equals(user.getUserId())) {
+//            // 해당 반려동물을 가족 구성원이 등록한 것인지 확인
+//            if (user.getFamily() == null
+//                    || pet.getFamily() == null
+//                    || !user.getFamily().getFamilyId().equals(pet.getFamily().getFamilyId())) {
+//                throw new UnauthorizedException("해당 반려동물에 접근할 권한이 없습니다.");
+//            }
+//        }
+
         if (!pet.getUser().getUserId().equals(user.getUserId())) {
-            // 해당 반려동물을 가족 구성원이 등록한 것인지 확인
-            if (user.getFamily() != null
-                    && pet.getFamily() != null
-                    && user.getFamily().getFamilyId().equals(pet.getFamily().getFamilyId())) {
-                throw new UnauthorizedException("해당 반려동물을 수정할 권한이 없습니다.");
-            }
-            // 그 외의 경우, 반려동물이 존재하지 않는 것으로 처리
-            throw new NotFoundException("반려동물이 존재하지 않습니다.");
+            throw new UnauthorizedException("해당 반려동물 정보를 수정할 권한이 없습니다.");
+        }
+
+        // 이미 'DELETE' 상태인지 확인
+        if (pet.getPetState() == PetState.DELETE) {
+            throw new AlreadyDeletedException("이미 삭제된 반려동물입니다.");
         }
 
         // jpa delete 호출
