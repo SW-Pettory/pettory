@@ -13,13 +13,13 @@ public interface WalkingRecordMapper {
 
 
     // 1-1. 현재 회원의 반려동물 산책 기록 조회
-    List<WalkingRecordSummaryResponse> findWalkingRecordsByUserIdForPetAndMonth(Long userId, Long petId, int year, int month);
+    List<WalkingRecordSummaryResponse> findWalkingRecordsByUserIdForPetAndMonth(Long userId, int year, int month);
 
     // 1-2. 가족 구성원 중 현재 회원을 제외한 다른 구성원들이 해당 반려동물에 대해 기록한 산책 기록 조회
-    List<WalkingRecordSummaryResponse> findWalkingRecordsByFamilyExcludeUserAndMonth(Long familyId, Long userId, Long petId, int year, int month);
+    List<WalkingRecordSummaryResponse> findWalkingRecordsByFamilyExcludeUserAndMonth(Long familyId, Long userId, int year, int month);
 
     // 1-3. 가족 전체의 해당 반려동물에 대한 모든 산책 기록 조회
-    List<WalkingRecordSummaryResponse> findAllWalkingRecordsByFamilyAndPetAndMonth(Long familyId, Long petId, int year, int month);
+    List<WalkingRecordSummaryResponse> findAllWalkingRecordsByFamilyAndPetAndMonth(Long familyId, int year, int month);
 
     // 2. 날짜별 산책 기록 조회
     List<WalkingRecordDailyResponse> findWalkingRecordsByDateAndFamily(LocalDate date, Long petId, Long familyId);

@@ -10,4 +10,6 @@ import java.time.LocalDate;
 public class WalkingRecordSummaryResponse {
     private LocalDate walkingRecordDate;    // 산책 날짜
     private Long walkingRecordDuration; // 산책 시간
+    private Long petId;
+    private String petName;
 }
