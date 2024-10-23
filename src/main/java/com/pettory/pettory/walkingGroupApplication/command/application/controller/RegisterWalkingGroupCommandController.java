@@ -1,6 +1,7 @@
 package com.pettory.pettory.walkingGroupApplication.command.application.controller;
 
 import com.pettory.pettory.common.CommonResponseDTO;
+import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.walkingGroupApplication.command.application.dto.RegisterWalkingGroupUpdateRequest;
 import com.pettory.pettory.walkingGroupApplication.command.application.dto.WalkingGroupApplicationRequest;
 import com.pettory.pettory.walkingGroupApplication.command.application.service.RegisterWalkingGroupCommandService;
@@ -54,8 +55,9 @@ public class RegisterWalkingGroupCommandController {
     @Operation(summary = "가입한 산책 모임 삭제", description = "가입한 산책 모임을 삭제한다.")
     @DeleteMapping("/{registerWalkingGroupId}")
     public ResponseEntity<CommonResponseDTO> deleteRegisterWalkingGroup(@PathVariable int registerWalkingGroupId) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        registerWalkingGroupCommandService.deleteRegisterWalkingGroup(registerWalkingGroupId);
+        registerWalkingGroupCommandService.deleteRegisterWalkingGroup(currentUserEmail, registerWalkingGroupId);
 
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "가입한 산책 모임 삭제 성공", null);
         return ResponseEntity.ok(successResponse);

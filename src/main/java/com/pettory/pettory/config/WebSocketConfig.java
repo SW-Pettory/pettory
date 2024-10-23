@@ -17,6 +17,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     /* Socket Handler 등록 */
     @Override
     public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatHandler, "/ws/testChatting").setAllowedOrigins("*");
+        registry.addHandler(chatHandler, "/ws/chatroom/{chatroomUniqueNum}").setAllowedOrigins("*");
     }
 }
