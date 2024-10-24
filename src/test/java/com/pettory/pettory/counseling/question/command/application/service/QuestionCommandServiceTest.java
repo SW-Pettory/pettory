@@ -1,7 +1,7 @@
 package com.pettory.pettory.counseling.question.command.application.service;
 
-import com.pettory.pettory.counseling.question.command.application.dto.QuestionCommandDTO;
-import com.pettory.pettory.counseling.question.command.domain.aggregate.QuestionState;
+import com.pettory.pettory.counseling.question.command.application.dto.QuestionCreateRequest;
+import com.pettory.pettory.counseling.question.command.domain.aggregate.QuestionStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,9 +53,9 @@ class QuestionCommandServiceTest {
                         "제가 그제 나갔다가 마루를 잃어버렸~~~~~.",
                         1103,
                         "ACTIVE",
-                        "2024-10-02 11:59:51",
+                        "2024-10-04 05:15:40",
                         null,
-                        LocalDateTime.now().toString()
+                        "2024-10-04 05:15:40"
                 )
         );
     }
@@ -65,13 +65,13 @@ class QuestionCommandServiceTest {
                 Arguments.of(
                         6,
                         1,
-                        "신삼 2번출구에서 잃어버린 마루를 찾습니다",
-                        "제가 어제 나갔다가 마루를 잃어버렸~~~~~.",
+                        "신삼 3번출구에서 잃어버린 마루를 찾습니다",
+                        "제가 그제 나갔다가 마루를 잃어버렸~~~~~.",
                         1103,
                         "ACTIVE",
-                        LocalDateTime.now().toString(),
+                        "2024-10-04 05:15:40",
                         null,
-                        null
+                        "2024-10-04 05:15:40"
                 )
         );
     }
@@ -82,13 +82,13 @@ class QuestionCommandServiceTest {
                 Arguments.of(
                         6,
                         1,
-                        "신삼 2번출구에서 잃어버린 마루를 찾습니다",
-                        "제가 어제 나갔다가 마루를 잃어버렸~~~~~.",
-                        1103,
+                        "신삼 3번출구에서 잃어버린 마루를 찾습니다",
+                        "제가 그제 나갔다가 마루를 잃어버렸~~~~~.",
+                        1104,
                         "DELETE",
-                        "2024-10-02 11:59:51",
-                        LocalDateTime.now().toString(),
-                        null
+                        "2024-10-04 05:15:40",
+                        "2024-10-04 05:15:40",
+                        "2024-10-04 05:15:40"
                 )
         );
     }
@@ -99,10 +99,10 @@ class QuestionCommandServiceTest {
     void testCreateQuestion(
             int userId, String counselingQuestionTitle,
             String counselingQuestionContent, int counselingQuestionHits,
-            QuestionState counselingQuestionState, String counselingQuestionInsertDatetime,
+            QuestionStatus counselingQuestionState, String counselingQuestionInsertDatetime,
             String counselingQuestionDeleteDatetime, String counselingQuestionUpdateDatetime) {
         //given
-        QuestionCommandDTO newQuestion = new QuestionCommandDTO(
+        QuestionCreateRequest newQuestion = new QuestionCreateRequest(
                 userId,
                 counselingQuestionTitle,
                 counselingQuestionContent,
@@ -132,10 +132,10 @@ class QuestionCommandServiceTest {
             int counselingQuestionNum,
             int userId, String counselingQuestionTitle,
             String counselingQuestionContent, int counselingQuestionHits,
-            QuestionState counselingQuestionState, String counselingQuestionInsertDatetime,
+            QuestionStatus counselingQuestionState, String counselingQuestionInsertDatetime,
             String counselingQuestionDeleteDatetime, String counselingQuestionUpdateDatetime) {
         //given
-        QuestionCommandDTO question = new QuestionCommandDTO(
+        QuestionCreateRequest question = new QuestionCreateRequest(
                 counselingQuestionNum,
                 userId,
                 counselingQuestionTitle,
@@ -161,10 +161,10 @@ class QuestionCommandServiceTest {
             int counselingQuestionNum,
             int userId, String counselingQuestionTitle,
             String counselingQuestionContent, int counselingQuestionHits,
-            QuestionState counselingQuestionState, String counselingQuestionInsertDatetime,
+            QuestionStatus counselingQuestionState, String counselingQuestionInsertDatetime,
             String counselingQuestionDeleteDatetime, String counselingQuestionUpdateDatetime) {
         //given
-        QuestionCommandDTO question = new QuestionCommandDTO(
+        QuestionCreateRequest question = new QuestionCreateRequest(
                 counselingQuestionNum,
                 userId,
                 counselingQuestionTitle,
@@ -190,10 +190,10 @@ class QuestionCommandServiceTest {
             int counselingQuestionNum,
             int userId, String counselingQuestionTitle,
             String counselingQuestionContent, int counselingQuestionHits,
-            QuestionState counselingQuestionState, String counselingQuestionInsertDatetime,
+            QuestionStatus counselingQuestionState, String counselingQuestionInsertDatetime,
             String counselingQuestionDeleteDatetime, String counselingQuestionUpdateDatetime) {
         //given
-        QuestionCommandDTO question = new QuestionCommandDTO(
+        QuestionCreateRequest question = new QuestionCreateRequest(
                 counselingQuestionNum,
                 userId,
                 counselingQuestionTitle,
