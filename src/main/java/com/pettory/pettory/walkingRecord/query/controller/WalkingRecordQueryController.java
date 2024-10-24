@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Pettory 산책 기록 컨트롤러")
 @RestController
@@ -27,17 +28,18 @@ public class WalkingRecordQueryController {
 
     @Operation(summary = "산책 기록 월별 요약", description = "월별로 산책 기록을 요약해서 조회한다.")
     // 1-1. 산책 기록 월별 요약 조회
-    @GetMapping("/summary/{year}/{month}/{petId}")
+//    @GetMapping("/summary/{year}/{month}/{petId}")
+    @GetMapping("/summary")
     public ResponseEntity<CommonResponseDTO> getWalkingRecordSummary(
-            @PathVariable("year") @Schema(example = "2024") int year,
-            @PathVariable("month") @Schema(example = "10") int month,
-            @PathVariable("petId") @Schema(example = "02") Long petId,
+            @RequestParam @Schema(example = "2024") int year,
+            @RequestParam @Schema(example = "10") int month,
             @RequestParam(value = "filterType", required = false, defaultValue = "all") @Schema(example = "all") String filterType
     ) {
 
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        List<WalkingRecordSummaryResponse> summaries = walkingRecordQueryService.getWalkingRecordSummary(currentUserEmail, year, month, petId, filterType);
+        Map<String, Object> summaries = walkingRecordQueryService.getWalkingRecordSummary(currentUserEmail, year, month, filterType);
+//        List<WalkingRecordSummaryResponse> summaries = walkingRecordQueryService.getWalkingRecordSummary(currentUserEmail, year, month, petId, filterType);
 
         CommonResponseDTO response = new CommonResponseDTO(HttpStatus.OK.value(), "산책 기록 요약 조회 성공", summaries);
         return ResponseEntity.ok(response);
