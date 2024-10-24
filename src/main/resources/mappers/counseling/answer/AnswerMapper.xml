@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pettory.pettory.counseling.answer.query.mapper.AnswerMapper">
+
+    <select id="selectAnswers" resultType="com.pettory.pettory.counseling.answer.query.dto.AnswerDto">
+        SELECT
+            a.counseling_answer_num,
+            b.counseling_question_num as "question.counseling_question_num",
+            c.user_id as "user.user_id",
+            c.user_nickname as "user.user_nickname",
+            c.user_role as "user.user_role",
+            c.user_hospital_info as "user.user_hospital_info",
+            c.user_hospital_name as "user.user_hospital_name",
+            b.counseling_question_title as "question.counseling_question_title",
+            b.counseling_question_content as "question.counseling_question_content",
+            b.counseling_question_content as "question.counseling_question_file_url",
+            a.counseling_answer_content,
+            a.counseling_answer_reanswer_num,
+            a.counseling_answer_file_url
+        FROM counseling_answer a
+        JOIN counseling_question b ON (a.counseling_question_num = b.counseling_question_num)
+        JOIN user c ON (b.user_id = c.user_id)
+        WHERE a.counseling_answer_state = 'ACTIVE'
+        <if test="counselingAnswerContent != null">
+            AND a.counseling_answer_content LIKE CONCAT('%', #{counselingAnswerContent}, '%')
+        </if>
+        ORDER BY a.counseling_answer_num DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectAnswerByNum" resultType="com.pettory.pettory.counseling.answer.query.dto.AnswerDto">
+        SELECT
+            a.counseling_answer_num,
+            b.counseling_question_num as "question.counseling_question_num",
+            c.user_id as "user.user_id",
+            c.user_nickname as "user.user_nickname",
+            c.user_role as "user.user_role",
+            c.user_hospital_info as "user.user_hospital_info",
+            c.user_hospital_name as "user.user_hospital_name",
+            b.counseling_question_title as "question.counseling_question_title",
+            b.counseling_question_content as "question.counseling_question_content",
+            b.counseling_question_content as "question.counseling_question_file_url",
+            a.counseling_answer_content,
+            a.counseling_answer_reanswer_num,
+            a.counseling_answer_file_url
+        FROM counseling_answer a
+        JOIN counseling_question b ON (a.counseling_question_num = b.counseling_question_num)
+        JOIN user c ON (b.user_id = c.user_id)
+        WHERE counseling_answer_num = #{counselingAnswerNum}
+        AND a.counseling_answer_state = 'ACTIVE'
+    </select>
+
+    <select id="countAnswers" resultType="long">
+        SELECT COUNT(*)
+        FROM counseling_answer a
+        JOIN counseling_question b ON (a.counseling_question_num = b.counseling_question_num)
+        JOIN user c ON (b.user_id = c.user_id)
+        WHERE a.counseling_answer_state = 'ACTIVE'
+        <if test="counselingAnswerContent != null">
+            AND a.counseling_answer_content LIKE CONCAT('%', #{counselingAnswerContent}, '%')
+        </if>
+    </select>
+</mapper>
