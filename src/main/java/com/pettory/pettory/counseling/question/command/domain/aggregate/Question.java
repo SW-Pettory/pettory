@@ -4,56 +4,68 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "counseling_question")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@EntityListeners(AuditingEntityListener.class)
+@SQLDelete(sql = "UPDATE counseling_question SET counseling_question_state = 'DELETE', counseling_question_delete_datetime = NOW() WHERE counseling_question_num = ?")
 public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "counseling_question_num")
-    private int counselingQuestionNum;
-
+    private Integer counselingQuestionNum;
     @Column(name = "user_id")
-    private int userId;
-
+    private Integer userId;
     @Column(name = "counseling_question_title")
     private String counselingQuestionTitle;
-
     @Column(name = "counseling_question_content")
     private String counselingQuestionContent;
-
     @Column(name = "counseling_question_hits")
-    private int counselingQuestionHits;
-
-    @Enumerated(EnumType.STRING)
+    private Integer counselingQuestionHits;
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "counseling_question_state")
-    private QuestionState counselingQuestionState  = QuestionState.ACTIVE;
-
+    private QuestionStatus counselingQuestionState  = QuestionStatus.WAIT;
+    @CreatedDate
     @Column(name = "counseling_question_insert_datetime")
-    private String counselingQuestionInsertDatetime;
-
+    private LocalDateTime counselingQuestionInsertDatetime;
     @Column(name = "counseling_question_delete_datetime")
-    private String counselingQuestionDeleteDatetime;
-
+    private LocalDateTime counselingQuestionDeleteDatetime;
+    @LastModifiedDate
     @Column(name = "counseling_question_update_datetime")
-    private String counselingQuestionUpdateDatetime;
+    private LocalDateTime counselingQuestionUpdateDatetime;
+    @Column(name = "counseling_question_file_url")
+    private String counselingQuestionFileUrl;
 
-    public void modifyCounselingQuestion(String counselingQuestionTitle, String counselingQuestionContent, String counselingQuestionUpdateDatetime) {
+    private Question(Integer userId, String counselingQuestionTitle, String counselingQuestionContent, Integer counselingQuestionHits, String counselingQuestionFileUrl) {
+        this.userId = userId;
         this.counselingQuestionTitle = counselingQuestionTitle;
         this.counselingQuestionContent = counselingQuestionContent;
-        this.counselingQuestionUpdateDatetime = counselingQuestionUpdateDatetime;
-    }
-
-    public void increaseCounselingQuestionHits(int counselingQuestionHits) {
         this.counselingQuestionHits = counselingQuestionHits;
+        this.counselingQuestionFileUrl = counselingQuestionFileUrl;
     }
 
-    public void removeCounselingQuestion(QuestionState counselingQuestionState, String counselingQuestionDeleteDatetime) {
+    public static Question create(Integer userId, String counselingQuestionTitle, String counselingQuestionContent, Integer counselingQuestionHits, String counselingQuestionFileUrl) {
+        return new Question(userId, counselingQuestionTitle, counselingQuestionContent, counselingQuestionHits, counselingQuestionFileUrl);
+    }
+
+    public void changeCounselingQuestionFileUrl(String counselingQuestionFileUrl) {
+        this.counselingQuestionFileUrl = counselingQuestionFileUrl;
+    }
+
+    public void updateQuestionDetails(Integer userId, String counselingQuestionTitle, String counselingQuestionContent, Integer counselingQuestionHits, QuestionStatus counselingQuestionState) {
+        this.userId = userId;
+        this.counselingQuestionTitle = counselingQuestionTitle;
+        this.counselingQuestionContent = counselingQuestionContent;
+        this.counselingQuestionHits = counselingQuestionHits;
         this.counselingQuestionState = counselingQuestionState;
-        this.counselingQuestionDeleteDatetime = counselingQuestionDeleteDatetime;
     }
-
 }
