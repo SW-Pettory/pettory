@@ -1,6 +1,7 @@
 package com.pettory.pettory.walkinggroup.command.application.controller;
 
 import com.pettory.pettory.common.CommonResponseDTO;
+import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.walkinggroup.command.application.dto.WalkingGroupCreateRequest;
 import com.pettory.pettory.walkinggroup.command.application.dto.WalkingGroupUpdateRequest;
 import com.pettory.pettory.walkinggroup.command.application.service.WalkingGroupCommandService;
@@ -26,7 +27,9 @@ public class WalkingGroupCommandController {
     @Operation(summary = "산책모임등록", description = "산책모임을 등록한다.")
     @PostMapping("/")
     public ResponseEntity<CommonResponseDTO> createWalkingGroup(@RequestBody @Valid WalkingGroupCreateRequest walkingGroupCreateRequest) {
-        int walkingGroupId = walkingGroupCommandService.createWalkingGroup(walkingGroupCreateRequest);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        int walkingGroupId = walkingGroupCommandService.createWalkingGroup(currentUserEmail, walkingGroupCreateRequest);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "새 산책모임 등록 성공", walkingGroupId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
@@ -39,7 +42,9 @@ public class WalkingGroupCommandController {
             @PathVariable int walkingGroupId,
             @RequestBody @Valid WalkingGroupUpdateRequest walkingGroupRequest
     ) {
-        walkingGroupCommandService.updateWalkingGroup(walkingGroupId, walkingGroupRequest);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        walkingGroupCommandService.updateWalkingGroup(currentUserEmail, walkingGroupId, walkingGroupRequest);
 
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "산책모임 정보 수정 성공", walkingGroupRequest);
         return ResponseEntity.ok(successResponse);
@@ -50,7 +55,9 @@ public class WalkingGroupCommandController {
     @DeleteMapping("/{walkingGroupId}")
     public ResponseEntity<CommonResponseDTO> deleteWalkingGroup(@PathVariable final int walkingGroupId) {
 
-        walkingGroupCommandService.deleteWalkingGroup(walkingGroupId);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        walkingGroupCommandService.deleteWalkingGroup(currentUserEmail, walkingGroupId);
 
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "산책모임 삭제 성공", null);
         return ResponseEntity.ok(successResponse);

@@ -151,6 +151,7 @@ public class SecurityConfig {
         config.addAllowedOrigin("http://localhost:5173"); // 허용할 도메인
         config.addAllowedHeader("*"); // 모든 헤더 허용
         config.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
+        config.addExposedHeader("token"); // 서버측에서 보내는 헤더에 대한 허용 설정
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config); // 모든 경로에 대해 CORS 적용
