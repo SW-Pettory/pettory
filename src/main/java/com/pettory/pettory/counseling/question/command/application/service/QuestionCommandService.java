@@ -1,74 +1,65 @@
 package com.pettory.pettory.counseling.question.command.application.service;
 
-import com.pettory.pettory.counseling.question.command.application.dto.QuestionCommandDTO;
+import com.pettory.pettory.counseling.question.command.application.dto.QuestionCreateRequest;
+import com.pettory.pettory.counseling.question.command.application.dto.QuestionUpdateRequest;
 import com.pettory.pettory.counseling.question.command.domain.aggregate.Question;
-import com.pettory.pettory.counseling.question.command.domain.aggregate.QuestionFile;
-import com.pettory.pettory.counseling.question.command.domain.aggregate.QuestionState;
-import com.pettory.pettory.counseling.question.command.infrastructure.repository.QuestionFileRepository;
-import com.pettory.pettory.counseling.question.command.infrastructure.repository.QuestionRepository;
-import org.modelmapper.ModelMapper;
+import com.pettory.pettory.counseling.question.command.domain.aggregate.QuestionStatus;
+import com.pettory.pettory.counseling.question.command.domain.repository.QuestionRepository;
+import com.pettory.pettory.counseling.question.command.mapper.QuestionMapper;
+import com.pettory.pettory.counseling.util.FileUploadUtils;
+import com.pettory.pettory.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-
 @Service
+@RequiredArgsConstructor
 public class QuestionCommandService {
 
+    @Value("${image.image-url-que}")
+    private String IMAGE_URL_QUE;
+    @Value("${image.image-dir-que}")
+    private String IMAGE_DIR_QUE;
+
     private final QuestionRepository questionRepository;
-    private final QuestionFileRepository questionFileRepository;
-    private final ModelMapper modelMapper;
 
-    public QuestionCommandService(QuestionRepository questionRepository, QuestionFileRepository questionFileRepository, ModelMapper modelMapper) {
-        this.questionRepository = questionRepository;
-        this.questionFileRepository = questionFileRepository;
-        this.modelMapper = modelMapper;
-    }
-
-    // 질문 작성 및 파일 저장
     @Transactional
-    public int createQuestion(QuestionCommandDTO questionCommandDTO, MultipartFile questionCommandImg) throws IOException {
-        // 1. 질문 저장
-        Question question = questionRepository.save(modelMapper.map(questionCommandDTO, Question.class));
+    public Integer createQuestion(QuestionCreateRequest questionRequest, MultipartFile questionImg) {
 
-        // 2. 파일 저장 처리
-        if (questionCommandImg != null && !questionCommandImg.isEmpty()) {
-            String uploadDir = "uploads/";
-            String originalFilename = questionCommandImg.getOriginalFilename();
-            String storageFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String filePath = uploadDir + storageFileName;
+        String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR_QUE, questionImg);
 
-            // 파일 저장 디렉토리에 파일 저장
-            File dest = new File(filePath);
-            questionCommandImg.transferTo(dest);
+        Question newQuestion = QuestionMapper.toEntity(questionRequest, IMAGE_URL_QUE + replaceFileName);
 
-            // 파일 메타데이터 저장
-            QuestionFile questionFile = new QuestionFile(question.getCounselingQuestionNum(), (int) questionCommandImg.getSize(), filePath);
-            questionFileRepository.save(questionFile);
-        }
+        Question question = questionRepository.save(newQuestion);
 
         return question.getCounselingQuestionNum();
     }
 
     @Transactional
-    public void modifyQuestion(QuestionCommandDTO questionCommandDTO) {
-        Question foundQuestion = questionRepository.save(modelMapper.map(questionCommandDTO, Question.class));
-        foundQuestion.modifyCounselingQuestion(questionCommandDTO.getCounselingQuestionTitle(), questionCommandDTO.getCounselingQuestionContent(), LocalDateTime.now().toString());
+    public void updateQuestion(Integer counselingQuestionNum, QuestionUpdateRequest questionRequest, MultipartFile questionImg) {
+
+        Question question = questionRepository.findById(counselingQuestionNum)
+                .orElseThrow(() -> new NotFoundException("해당 번호에 맞는 질문이 없습니다. num : " + counselingQuestionNum));
+
+        if(questionImg != null) {
+            String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR_QUE, questionImg);
+            FileUploadUtils.deleteFile(IMAGE_DIR_QUE, question.getCounselingQuestionFileUrl().replace(IMAGE_URL_QUE, ""));
+            question.changeCounselingQuestionFileUrl(IMAGE_URL_QUE + replaceFileName);
+        }
+
+        question.updateQuestionDetails(
+                questionRequest.getUserId(),
+                questionRequest.getCounselingQuestionTitle(),
+                questionRequest.getCounselingQuestionContent(),
+                questionRequest.getCounselingQuestionHits(),
+                QuestionStatus.valueOf(questionRequest.getCounselingQuestionState())
+        );
     }
 
     @Transactional
-    public void increaseHits(QuestionCommandDTO questionCommandDTO) {
-        Question question = questionRepository.save(modelMapper.map(questionCommandDTO, Question.class));
-        question.increaseCounselingQuestionHits(question.getCounselingQuestionHits() + 1);
+    public void deleteQuestion(Integer counselingQuestionNum) {
+        questionRepository.deleteById(counselingQuestionNum);
     }
-
-    @Transactional
-    public void removeQuestion(QuestionCommandDTO questionCommandDTO) {
-        Question foundQuestion = questionRepository.save(modelMapper.map(questionCommandDTO, Question.class));
-        foundQuestion.removeCounselingQuestion(QuestionState.DELETE, LocalDateTime.now().toString());
-    }
-
 }
