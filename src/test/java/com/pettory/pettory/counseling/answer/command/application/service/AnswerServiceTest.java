@@ -1,6 +1,6 @@
 package com.pettory.pettory.counseling.answer.command.application.service;
 
-import com.pettory.pettory.counseling.answer.command.application.dto.AnswerDTO;
+import com.pettory.pettory.counseling.answer.command.application.dto.AnswerCreateRequest;
 import com.pettory.pettory.counseling.answer.command.domain.aggregate.AnswerState;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -50,9 +50,9 @@ class AnswerServiceTest {
                         6,
                         "제가 40분전에 3번출구 쪽에서 본거같아요",
                         "ACTIVE",
-                        "2023-01-01 10:00:00",
+                        "2024-10-04 05:15:40",
                         null,
-                        LocalDateTime.now().toString(),
+                        "2024-10-04 05:15:40",
                         -1
                 )
         );
@@ -63,11 +63,11 @@ class AnswerServiceTest {
                 Arguments.of(
                         19,
                         6,
-                        "제가 30분전에 3번출구 쪽에서 본거같아요",
+                        "제가 40분전에 3번출구 쪽에서 본거같아요",
                         "DELETE",
-                        "2023-01-01 10:00:00",
-                        LocalDateTime.now().toString(),
-                        null,
+                        "2024-10-04 05:15:40",
+                        "2024-10-04 05:15:40",
+                        "2024-10-04 05:15:40",
                         -1
                 )
         );
@@ -96,7 +96,7 @@ class AnswerServiceTest {
             String counselingAnswerDeleteDatetime, String counselingAnswerUpdateDatetime,
             int counselingAnswerReanswerNum) {
         //given
-        AnswerDTO newAnswer = new AnswerDTO(
+        AnswerCreateRequest newAnswer = new AnswerCreateRequest(
                 counselingQuestionNum,
                 counselingAnswerContent,
                 counselingAnswerState,
@@ -127,7 +127,7 @@ class AnswerServiceTest {
             String counselingAnswerInsertDatetime, String counselingAnswerDeleteDatetime,
             String counselingAnswerUpdateDatetime, int counselingAnswerReanswerNum) {
         //given
-        AnswerDTO answer = new AnswerDTO(
+        AnswerCreateRequest answer = new AnswerCreateRequest(
                 counselingAnswerNum,
                 counselingQuestionNum,
                 counselingAnswerContent,
@@ -154,7 +154,7 @@ class AnswerServiceTest {
             String counselingAnswerInsertDatetime, String counselingAnswerDeleteDatetime,
             String counselingAnswerUpdateDatetime, int counselingAnswerReanswerNum) {
         //given
-        AnswerDTO answer = new AnswerDTO(
+        AnswerCreateRequest answer = new AnswerCreateRequest(
                 counselingAnswerNum,
                 counselingQuestionNum,
                 counselingAnswerContent,
@@ -181,7 +181,7 @@ class AnswerServiceTest {
             String counselingAnswerDeleteDatetime, String counselingAnswerUpdateDatetime,
             int counselingAnswerReanswerNum) {
         //given
-        AnswerDTO newSubAnswer = new AnswerDTO(
+        AnswerCreateRequest newSubAnswer = new AnswerCreateRequest(
                 counselingQuestionNum,
                 counselingAnswerContent,
                 counselingAnswerState,
