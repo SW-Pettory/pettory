@@ -1,60 +1,46 @@
 package com.pettory.pettory.counseling.question.query.service;
 
-import com.pettory.pettory.counseling.question.query.dto.QuestionQueryDTO;
+import com.pettory.pettory.counseling.question.query.dto.QuestionDetailResponse;
+import com.pettory.pettory.counseling.question.query.dto.QuestionDto;
+import com.pettory.pettory.counseling.question.query.dto.QuestionListResponse;
 import com.pettory.pettory.counseling.question.query.mapper.QuestionMapper;
+import com.pettory.pettory.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class QuestionQueryService {
 
     private final QuestionMapper questionMapper;
 
-    public QuestionQueryService(QuestionMapper questionMapper) {
-        this.questionMapper = questionMapper;
+    @Transactional(readOnly = true)
+    public QuestionListResponse getQuestions(Integer page, Integer size, String counselingQuestionTitle, String counselingQuestionContent, String counselingQuestionTopic, String userNickname) {
+        int offset = (page - 1) * size;
+        List<QuestionDto> questions = questionMapper.selectQuestions(offset, size, counselingQuestionTitle, counselingQuestionContent, counselingQuestionTopic, userNickname);
+
+        long totalItems = questionMapper.countQuestions(counselingQuestionTitle, counselingQuestionContent, counselingQuestionTopic, userNickname);
+
+        return QuestionListResponse.builder()
+                .questions(questions)
+                .currentPage(page)
+                .totalPages((int) Math.ceil((double) totalItems / size))
+                .totalItems(totalItems)
+                .build();
     }
 
-    public List<QuestionQueryDTO> findAllQuestions() {
+    @Transactional(readOnly = true)
+    public QuestionDetailResponse getQuestion(Integer counselingQuestionNum) {
+        QuestionDto question = questionMapper.selectQuestionByNum(counselingQuestionNum);
 
-        List<QuestionQueryDTO> questionList = questionMapper.findAllQuestions();
+        if (question == null) {
+            throw new NotFoundException("해당 번호를 가진 질문을 찾지 못했습니다. 질문 번호 : " + counselingQuestionNum);
+        }
 
-        return questionList;
-    }
-
-    public QuestionQueryDTO findQuestionByNum(int counselingQuestionNum) {
-
-        QuestionQueryDTO question = questionMapper.findQuestionByNum(counselingQuestionNum);
-
-        return question;
-    }
-
-    public List<QuestionQueryDTO> findQuestionsByTitle(String counselingQuestionTitle) {
-
-        List<QuestionQueryDTO> questionList = questionMapper.findQuestionsByTitle(counselingQuestionTitle);
-
-        return questionList;
-    }
-
-    public List<QuestionQueryDTO> findQuestionsByContent(String counselingQuestionContent) {
-
-        List<QuestionQueryDTO> questionList = questionMapper.findQuestionsByContent(counselingQuestionContent);
-
-        return questionList;
-    }
-
-    public List<QuestionQueryDTO> findQuestionsByTopic(String counselingQuestionTopic) {
-
-        List<QuestionQueryDTO> questionList = questionMapper.findQuestionsByTopic(counselingQuestionTopic);
-
-        return questionList;
-    }
-
-    public List<QuestionQueryDTO> findQuestionsByNickname(String userNickname) {
-
-        List<QuestionQueryDTO> questionList = questionMapper.findQuestionsByNickname(userNickname);
-
-        return questionList;
+        return new QuestionDetailResponse(question);
     }
 
 }
