@@ -2,6 +2,7 @@ package com.pettory.pettory.jointshopping.query.controller;
 
 import com.pettory.pettory.jointshopping.query.dto.*;
 import com.pettory.pettory.jointshopping.query.service.JointShoppingGroupQueryService;
+import com.pettory.pettory.security.util.UserSecurity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,8 +29,9 @@ public class JointShoppingGroupQueryController {
             @RequestParam(required = false) String groupName,
             @RequestParam(required = false) String products
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getGroups(page, size, categoryNum, groupName, products);
+        JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getGroups(currentUserEmail, page, size, categoryNum, groupName, products);
 
         return ResponseEntity.ok(response);
     }
@@ -39,7 +41,9 @@ public class JointShoppingGroupQueryController {
     @GetMapping("/groups/{groupNum}")
     public ResponseEntity<JointShoppingGroupDetailResponse> getGroup(@PathVariable Long groupNum) {
 
-        JointShoppingGroupDetailResponse response = jointShoppingGroupQueryService.getGroup(groupNum);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        JointShoppingGroupDetailResponse response = jointShoppingGroupQueryService.getGroup(currentUserEmail, groupNum);
 
         return ResponseEntity.ok(response);
     }
@@ -48,12 +52,11 @@ public class JointShoppingGroupQueryController {
     @ApiResponse(responseCode = "200", description = "현재 공동구매모임의 전체 사용자 목록 조회 성공")
     @GetMapping("/groups/users/{groupNum}")
     public ResponseEntity<JointShoppingUserListResponse> getGroupUsers(
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @PathVariable @Schema(example = "1") Long groupNum
+            @PathVariable Long groupNum
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        JointShoppingUserListResponse response = jointShoppingGroupQueryService.getGroupUsers(page, size, groupNum);
+        JointShoppingUserListResponse response = jointShoppingGroupQueryService.getGroupUsers(currentUserEmail, groupNum);
 
         return ResponseEntity.ok(response);
     }
@@ -63,11 +66,11 @@ public class JointShoppingGroupQueryController {
     @GetMapping("/groups/user")
     public ResponseEntity<JointShoppingGroupListResponse> getUserGroups(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam @Schema(example = "3") Long userId
+            @RequestParam(defaultValue = "10") Integer size
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getUserGroups(page, size, userId);
+        JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getUserGroups(page, size, currentUserEmail);
 
         return ResponseEntity.ok(response);
     }

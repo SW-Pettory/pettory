@@ -21,4 +21,6 @@ public interface JointShoppingGroupUserRepository {
     List<JointShoppingGroupUser> findByJointShoppingGroup(JointShoppingGroup jointShoppingGroup);
 
     List<JointShoppingGroupUser> findByJointShoppingGroupAndUserAndResignYnTrue(JointShoppingGroup jointShoppingGroup, User user);
+
+    JointShoppingGroupUser findByJointShoppingGroupAndUser(JointShoppingGroup jointShoppingGroup, User user);
 }

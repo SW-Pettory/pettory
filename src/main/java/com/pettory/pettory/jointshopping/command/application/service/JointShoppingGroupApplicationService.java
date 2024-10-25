@@ -115,7 +115,7 @@ public class JointShoppingGroupApplicationService {
 
     /* 공동구매모임 나가기(모임 사용자 삭제) */
     @Transactional
-    public void exitGroupUser(String userEmail, Long jointShoppingGroupUserNum) {
+    public void exitGroupUser(String userEmail, Long jointShoppingGroupNum) {
         UserSecurity.validateCurrentUser(userEmail);
 
         // 회원 정보 확인
@@ -123,37 +123,50 @@ public class JointShoppingGroupApplicationService {
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
         /* 공동구매모임 자동신청가능 */
-        JointShoppingGroup jointShoppingGroup = jointShoppingGroupUserDomainService.findGroup(jointShoppingGroupUserNum);
+        // 모임 찾기
+        JointShoppingGroup jointShoppingGroup = jointShoppingGroupDomainService.findGroup(jointShoppingGroupNum);
+
         if(jointShoppingGroup.getJointShoppingGroupState().equals("CLOSE")){
             jointShoppingGroupDomainService.updateApplication(jointShoppingGroup);
         }
 
-        jointShoppingGroupUserDomainService.deleteGroupUser(jointShoppingGroupUserNum);
+        // 그룹 번호와 유저 번호로 도메인 객체 반환
+        JointShoppingGroupUser jointShoppingGroupUser
+                = jointShoppingGroupUserDomainService.findByJointShoppingGroupAndUser(jointShoppingGroup, user);
+
+        jointShoppingGroupUserDomainService.deleteGroupUser(jointShoppingGroupUser.getJointShoppingGroupUserListNum());
     }
 
     /* 공동구매모임 강퇴 (모임 사용자 삭제, 재등록 불가 ) */
     @Transactional
-    public void withdrawalGroupUser(String userEmail, Long jointShoppingGroupUserNum) {
-        UserSecurity.validateCurrentUser(userEmail);
+    public void withdrawalGroupUser(String currentUserEmail, Long jointShoppingGroupNum, String userEmail) {
+
+        UserSecurity.validateCurrentUser(currentUserEmail);
 
         // 회원 정보 확인
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
         /* 공동구매모임 자동신청가능 */
-        JointShoppingGroup jointShoppingGroup = jointShoppingGroupUserDomainService.findGroup(jointShoppingGroupUserNum);
+        // 모임 찾기
+        JointShoppingGroup jointShoppingGroup = jointShoppingGroupDomainService.findGroup(jointShoppingGroupNum);
+
         if(jointShoppingGroup.getJointShoppingGroupState().equals("CLOSE")){
             jointShoppingGroupDomainService.updateApplication(jointShoppingGroup);
         }
 
+        JointShoppingGroupUser jointShoppingGroupUser
+                = jointShoppingGroupUserDomainService.findByJointShoppingGroupAndUser(jointShoppingGroup, user);
+
         // 강퇴 여부 수정
-        JointShoppingGroupUser newJointShoppingGroupUser = jointShoppingGroupUserDomainService.updateResignYn(jointShoppingGroupUserNum);
+        JointShoppingGroupUser newJointShoppingGroupUser
+                = jointShoppingGroupUserDomainService.updateResignYn(jointShoppingGroupUser.getJointShoppingGroupUserListNum());
 
         /* saveAndFlush 로직 실행 */
         jointShoppingGroupUserDomainService.saveAndFlushGroupUser(newJointShoppingGroupUser);
 
         /* soft delete */
-        jointShoppingGroupUserDomainService.deleteGroupUser(jointShoppingGroupUserNum);
+        jointShoppingGroupUserDomainService.deleteGroupUser(jointShoppingGroupUser.getJointShoppingGroupUserListNum());
     }
 
     /* 공동구매 방장 물품 배송 정보 등록(수정) */

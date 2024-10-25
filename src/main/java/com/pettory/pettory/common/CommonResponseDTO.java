@@ -15,4 +15,9 @@ public class CommonResponseDTO {
         this.statusMessage = statusMessage;
         this.result = result;
     }
+
+    public CommonResponseDTO(int statusCode, String statusMessage) {
+        this.statusCode = statusCode;
+        this.statusMessage = statusMessage;
+    }
 }

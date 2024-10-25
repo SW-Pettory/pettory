@@ -2,6 +2,7 @@ package com.pettory.pettory.jointshopping.query.controller;
 
 import com.pettory.pettory.jointshopping.query.dto.*;
 import com.pettory.pettory.jointshopping.query.service.JointShoppingGroupQueryService;
+import com.pettory.pettory.security.util.UserSecurity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,11 +24,11 @@ public class BookmarkQueryController {
     @GetMapping("/bookmarks")
     public ResponseEntity<JointShoppingGroupListResponse> getBookmarks(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam @Schema(example = "3") Long userId
+            @RequestParam(defaultValue = "10") Integer size
     ) {
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getBookmarks(page, size, userId);
+        JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getBookmarks(currentUserEmail, page, size);
 
         return ResponseEntity.ok(response);
     }

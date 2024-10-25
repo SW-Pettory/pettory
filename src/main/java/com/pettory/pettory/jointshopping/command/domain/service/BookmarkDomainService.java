@@ -34,5 +34,8 @@ public class BookmarkDomainService {
         bookmarkRepository.deleteById(bookmarkNum);
     }
 
-
+    // 회원정보와 그룹정보로 북마크 찾기
+    public Bookmark findBookmark(JointShoppingGroup jointShoppingGroup, User user) {
+        return bookmarkRepository.findByJointShoppingGroupAndUser(jointShoppingGroup, user);
+    }
 }

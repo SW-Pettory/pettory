@@ -3,6 +3,7 @@ package com.pettory.pettory.jointshopping.command.application.controller;
 import com.pettory.pettory.common.CommonResponseDTO;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingDeliveryInfoRequest;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingGroupRequest;
+import com.pettory.pettory.jointshopping.command.application.dto.WithdrawalRequest;
 import com.pettory.pettory.jointshopping.command.application.service.JointShoppingGroupApplicationService;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroupUser;
@@ -73,11 +74,12 @@ public class JointShoppingGroupCommandController {
 
     @Operation(summary = "공동구매모임 참가", description = "회원이 공동구매모임에 참가한다. 가득찬 모임이거나 이미 강퇴당한적 있는 모임이라면 참가할 수 없다.")
     @ApiResponse(responseCode = "201", description = "공동구매모임 참가 성공")
-    @PostMapping("/groups/users")
+    @PostMapping("/groups/{jointShoppingGroupNum}/users")
     public ResponseEntity<CommonResponseDTO> insertGroupUser(
-            @RequestBody Long jointShoppingGroupNum
+            @PathVariable final Long jointShoppingGroupNum
     ){
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
+        System.out.println(currentUserEmail);
 
         JointShoppingGroupUser jointShoppingGroupUser = jointShoppingGroupApplicationService.insertGroupUser(currentUserEmail, jointShoppingGroupNum);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "공동구매모임 참가 성공", jointShoppingGroupUser);
@@ -87,28 +89,29 @@ public class JointShoppingGroupCommandController {
 
     @Operation(summary = "공동구매모임 나가기", description = "회원이 공동구매모임을 나간다.")
     @ApiResponse(responseCode = "204", description = "공동구매모임 나가기 성공")
-    @DeleteMapping("/groups/users/{jointShoppingGroupUserNum}")
+    @DeleteMapping("/groups/{jointShoppingGroupNum}/users")
     public ResponseEntity<CommonResponseDTO> exitGroupUser(
-            @PathVariable @Schema(example = "11") final Long jointShoppingGroupUserNum
+            @PathVariable final Long jointShoppingGroupNum
     ) {
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        jointShoppingGroupApplicationService.exitGroupUser(currentUserEmail, jointShoppingGroupUserNum);
-        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매모임 나가기 성공", jointShoppingGroupUserNum);
+        jointShoppingGroupApplicationService.exitGroupUser(currentUserEmail, jointShoppingGroupNum);
+        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매모임 나가기 성공", jointShoppingGroupNum);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 
     @Operation(summary = "공동구매모임 강퇴", description = "회원이 공동구매모임에서 강퇴당한다. 해당 모임에 다시 참가할 수 없다.")
     @ApiResponse(responseCode = "204", description = "공동구매모임 강퇴 성공")
-    @DeleteMapping("/groups/users/withdrawal/{jointShoppingGroupUserNum}")
+    @DeleteMapping("/groups/{jointShoppingGroupNum}/users/withdrawal")
     public ResponseEntity<CommonResponseDTO> withdrawalGroupUser(
-            @PathVariable @Schema(example = "11") final Long jointShoppingGroupUserNum
-    ){
+            @PathVariable final Long jointShoppingGroupNum,
+            @RequestBody WithdrawalRequest withdrawalRequest
+            ){
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        jointShoppingGroupApplicationService.withdrawalGroupUser(currentUserEmail, jointShoppingGroupUserNum);
-        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매모임 강퇴 성공", jointShoppingGroupUserNum);
+        jointShoppingGroupApplicationService.withdrawalGroupUser(currentUserEmail, jointShoppingGroupNum, withdrawalRequest.getUserEmail());
+        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매모임 강퇴 성공", jointShoppingGroupNum);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

@@ -81,6 +81,8 @@ public class JointShoppingGroupUserDomainService {
         return jointShoppingGroupUser.getJointShoppingGroup();
     }
 
-
-
+    // 그룹 번호와 유저 번호로 도메인 객체 반환
+    public JointShoppingGroupUser findByJointShoppingGroupAndUser(JointShoppingGroup jointShoppingGroup, User user) {
+        return jointShoppingGroupUserRepository.findByJointShoppingGroupAndUser(jointShoppingGroup, user);
+    }
 }

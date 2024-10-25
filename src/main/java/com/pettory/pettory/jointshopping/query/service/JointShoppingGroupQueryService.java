@@ -3,7 +3,9 @@ package com.pettory.pettory.jointshopping.query.service;
 import com.pettory.pettory.exception.NotFoundException;
 import com.pettory.pettory.jointshopping.query.dto.*;
 import com.pettory.pettory.jointshopping.query.mapper.JointShoppingGroupMapper;
+import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.user.query.dto.UserInfoResponse;
+import com.pettory.pettory.user.query.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +17,14 @@ import java.util.List;
 public class JointShoppingGroupQueryService {
 
     private final JointShoppingGroupMapper jointShoppingGroupMapper;
+    private final UserMapper userMapper;
 
     /* 공동구매모임 목록 조회 */
     @Transactional(readOnly = true)
-    public JointShoppingGroupListResponse getGroups(Integer page, Integer size, Long categoryNum, String groupName, String products) {
+    public JointShoppingGroupListResponse getGroups(String userEmail, Integer page, Integer size, Long categoryNum, String groupName, String products) {
+
+        UserSecurity.validateCurrentUser(userEmail);
+
         int offset = (page - 1) * size;
         List<JointShoppingGroupDTO> groups = jointShoppingGroupMapper.selectGroups(offset, size, categoryNum, groupName, products);
 
@@ -34,19 +40,39 @@ public class JointShoppingGroupQueryService {
 
     /* 공동구매모임 상세 조회  */
     @Transactional(readOnly = true)
-    public JointShoppingGroupDetailResponse getGroup(Long groupNum) {
+    public JointShoppingGroupDetailResponse getGroup(String userEmail, Long groupNum) {
+
+        UserSecurity.validateCurrentUser(userEmail);
+
+        // 로그인 회원 id 조회
+        Long userId = userMapper.findUserIdByEmail(userEmail).getUserId();
+
         JointShoppingGroupDTO group = jointShoppingGroupMapper.selectGroupByNum(groupNum);
 
         if (group == null) {
             throw new NotFoundException("해당 코드를 가진 그룹을 찾지 못했습니다. 그룹 코드 : " + groupNum);
         }
 
-        return new JointShoppingGroupDetailResponse(group);
+        Boolean isMaster = false;
+        if(userId.equals(group.getUserId())) {
+            isMaster = true;
+        }
+
+        return JointShoppingGroupDetailResponse.builder()    // 이 클래스가 가지고 있는 필드값들이 메서드에 자동완성, 세팅을 여기서 함
+                .group(group)
+                .isMaster(isMaster)
+                .build();
     }
 
     /* 즐겨찾기된 모임 목록 조회 */
     @Transactional(readOnly = true)
-    public JointShoppingGroupListResponse getBookmarks(Integer page, Integer size, Long userId) {
+    public JointShoppingGroupListResponse getBookmarks(String userEmail, Integer page, Integer size) {
+
+        UserSecurity.validateCurrentUser(userEmail);
+
+        // 로그인 회원 id 조회
+        Long userId = userMapper.findUserIdByEmail(userEmail).getUserId();
+
         int offset = (page - 1) * size;
         List<JointShoppingGroupDTO> groups = jointShoppingGroupMapper.selectBookmarks(offset, size, userId);
 
@@ -62,23 +88,28 @@ public class JointShoppingGroupQueryService {
 
     /* 현재 공동구매모임의 전체 사용자 목록 조회 */
     @Transactional(readOnly = true)
-    public JointShoppingUserListResponse getGroupUsers(Integer page, Integer size, Long groupNum) {
-        int offset = (page - 1) * size;
-        List<UserInfoResponse> Users = jointShoppingGroupMapper.selectGroupUsers(offset, size, groupNum);
+    public JointShoppingUserListResponse getGroupUsers(String userEmail, Long groupNum) {
+
+        UserSecurity.validateCurrentUser(userEmail);
+
+        List<UserInfoResponse> Users = jointShoppingGroupMapper.selectGroupUsers(groupNum);
 
         long totalItems = jointShoppingGroupMapper.countGroupUsers(groupNum);
 
         return JointShoppingUserListResponse.builder()    // 이 클래스가 가지고 있는 필드값들이 메서드에 자동완성, 세팅을 여기서 함
                 .groupUserList(Users)
-                .currentPage(page)
-                .totalPages((int) Math.ceil((double) totalItems / size))
                 .totalItems(totalItems)
                 .build();
     }
 
     /* 현재 사용자가 참여한 공동구매모임 목록 조회 */
     @Transactional(readOnly = true)
-    public JointShoppingGroupListResponse getUserGroups(Integer page, Integer size, Long userId) {
+    public JointShoppingGroupListResponse getUserGroups(Integer page, Integer size, String userEmail) {
+        UserSecurity.validateCurrentUser(userEmail);
+
+        // 로그인 회원 id 조회
+        Long userId = userMapper.findUserIdByEmail(userEmail).getUserId();
+
         int offset = (page - 1) * size;
         List<JointShoppingGroupDTO> groups = jointShoppingGroupMapper.selectUserGroups(offset, size, userId);
 
@@ -122,6 +153,7 @@ public class JointShoppingGroupQueryService {
                 .totalItems(totalItems)
                 .build();
     }
+
 
 
 }

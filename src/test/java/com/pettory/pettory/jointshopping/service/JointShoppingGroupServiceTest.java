@@ -191,7 +191,7 @@ public class JointShoppingGroupServiceTest {
     @Test
     void testWithdrawalGroupUser() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.withdrawalGroupUser("userEmail", 15L)
+                () -> jointShoppingGroupApplicationService.withdrawalGroupUser("userEmail", 15L, userId)
         );
     }
 
@@ -217,7 +217,7 @@ public class JointShoppingGroupServiceTest {
 
         Assertions.assertDoesNotThrow(
                 () -> {
-                    JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getGroups(page, size, categoryNum, groupName, products);
+                    JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getGroups("currentUserEmail", page, size, categoryNum, groupName, products);
                     response.getGroupList().forEach(group -> System.out.println(group));
                 }
         );
@@ -229,7 +229,7 @@ public class JointShoppingGroupServiceTest {
         Assertions.assertDoesNotThrow(
 
                 () -> {
-                    JointShoppingGroupDetailResponse response = jointShoppingGroupQueryService.getGroup(7L);
+                    JointShoppingGroupDetailResponse response = jointShoppingGroupQueryService.getGroup(currentUserEmail, 7L);
                     System.out.println(response.getGroup());
                 }
         );
@@ -241,7 +241,7 @@ public class JointShoppingGroupServiceTest {
     void testGetGroupUsers(Integer page, Integer size, Long groupNum) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    JointShoppingUserListResponse response =  jointShoppingGroupQueryService.getGroupUsers(page, size, groupNum);
+                    JointShoppingUserListResponse response =  jointShoppingGroupQueryService.getGroupUsers("userEmail",groupNum);
                     response.getGroupUserList().forEach(groupUser -> System.out.println(groupUser));
                 }
         );
@@ -253,7 +253,7 @@ public class JointShoppingGroupServiceTest {
     void testGetUserGroups(Integer page, Integer size, Long userId) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getUserGroups(page, size, userId);
+                    JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getUserGroups(page, size, "userEmail");
                     response.getGroupList().forEach(group -> System.out.println(group));
                 }
         );

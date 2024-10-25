@@ -3,11 +3,8 @@ package com.pettory.pettory.jointshopping.command.application.service;
 import com.pettory.pettory.exception.NotFoundException;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.Bookmark;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
-import com.pettory.pettory.jointshopping.command.domain.repository.BookmarkRepository;
-import com.pettory.pettory.jointshopping.command.domain.repository.JointShoppingGroupRepository;
 import com.pettory.pettory.jointshopping.command.domain.service.BookmarkDomainService;
 import com.pettory.pettory.jointshopping.command.domain.service.JointShoppingGroupDomainService;
-import com.pettory.pettory.pet.command.domain.aggregate.Pet;
 import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.user.command.domain.aggregate.User;
 import com.pettory.pettory.user.command.domain.repository.UserRepository;
@@ -48,7 +45,7 @@ public class BookmarkApplicationService {
 
     /* 즐겨찾기 삭제 */
     @Transactional
-    public void deleteBookmark(String userEmail, Long bookmarkNum) {
+    public Long deleteBookmark(String userEmail, Long jointShoppingGroupNum) {
 
         UserSecurity.validateCurrentUser(userEmail);
 
@@ -56,6 +53,14 @@ public class BookmarkApplicationService {
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        bookmarkDomainService.deleteBookmark(bookmarkNum);
+        JointShoppingGroup jointShoppingGroup = jointShoppingGroupDomainService.findGroup(jointShoppingGroupNum);
+
+        // 회원정보와 그룹정보로 북마크 찾기
+        Bookmark bookmark = bookmarkDomainService.findBookmark(jointShoppingGroup, user);
+
+        // 북마크 삭제
+        bookmarkDomainService.deleteBookmark(bookmark.getBookmarkNum());
+
+        return bookmark.getBookmarkNum();
     }
 }

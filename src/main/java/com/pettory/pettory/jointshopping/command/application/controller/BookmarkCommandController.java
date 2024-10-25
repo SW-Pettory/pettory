@@ -23,9 +23,9 @@ public class BookmarkCommandController {
 
     @Operation(summary = "즐겨찾기 등록", description = "회원이 공동구매모임을 즐겨찾기를 등록한다.")
     @ApiResponse(responseCode = "201", description = "즐겨찾기 등록 성공")
-    @PostMapping("/bookmarks")
+    @PostMapping("/{jointShoppingGroupNum}/bookmarks")
     public ResponseEntity<CommonResponseDTO> createBookmark(
-            @RequestBody Long jointShoppingGroupNum
+            @PathVariable Long jointShoppingGroupNum
     ) {
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
@@ -37,13 +37,13 @@ public class BookmarkCommandController {
 
     @Operation(summary = "즐겨찾기 삭제", description = "회원이 공동구매모임을 즐겨찾기를 취소한다.")
     @ApiResponse(responseCode = "204", description = "즐겨찾기 삭제 성공")
-    @DeleteMapping("/bookmarks/{bookmarkNum}")
+    @DeleteMapping("/{jointShoppingGroupNum}/bookmarks")
     public ResponseEntity<CommonResponseDTO> deleteBookmark(
-            @PathVariable @Schema(example = "3") final Long bookmarkNum
+            @PathVariable @Schema(example = "3") final Long jointShoppingGroupNum
     ) {
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        bookmarkApplicationService.deleteBookmark(currentUserEmail, bookmarkNum);
+        Long bookmarkNum = bookmarkApplicationService.deleteBookmark(currentUserEmail, jointShoppingGroupNum);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "즐겨찾기 삭제 성공", bookmarkNum);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);

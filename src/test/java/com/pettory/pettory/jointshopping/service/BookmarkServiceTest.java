@@ -63,7 +63,7 @@ public class BookmarkServiceTest {
     void testGetBookmarks(Integer page, Integer size, Long userId) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getBookmarks(page, size, userId);
+                    JointShoppingGroupListResponse response = jointShoppingGroupQueryService.getBookmarks("userEmail",page, size);
                     response.getGroupList().forEach(group -> System.out.println(group));
                 }
         );
