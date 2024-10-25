@@ -191,7 +191,7 @@ public class JointShoppingGroupServiceTest {
     @Test
     void testWithdrawalGroupUser() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.withdrawalGroupUser("userEmail", 15L, userId)
+                () -> jointShoppingGroupApplicationService.withdrawalGroupUser("userEmail", 15L, "userEmail")
         );
     }
 
