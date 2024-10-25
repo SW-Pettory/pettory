@@ -9,23 +9,21 @@
             rwg.walking_group_id,
             rwg.user_id,
             u.user_name,
-            rwg.register_walking_group_state
+            rwg.register_walking_group_state,
+            wg.walking_group_name
         FROM register_walking_group rwg
         JOIN user u ON (rwg.user_id = u.user_id)
-        WHERE true
-        <if test="walkingGroupId != null">
-            AND rwg.walking_group_id = #{walkingGroupId}
-        </if>
+        JOIN walking_group wg ON (rwg.walking_group_id = wg.walking_group_id)
+        WHERE u.user_id = #{userId}
+        AND rwg.register_walking_group_state = 'ACTIVE'
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="countRegisterWalkingGroups" resultType="long">
         SELECT COUNT(*)
-        FROM register_walking_group
-        WHERE true
-        <if test="walkingGroupId != null">
-            AND walking_group_id = #{walkingGroupId}
-        </if>
+        FROM register_walking_group rwg
+        JOIN user u ON u.user_id = rwg.user_id
+        WHERE u.user_id = #{userId}
     </select>
 
     <select id="selectRegisterWalkingGroupById" resultType="com.pettory.pettory.walkingGroupApplication.query.dto.RegisterWalkingGroupDTO">
@@ -33,10 +31,30 @@
             rwg.register_walking_group_id,
             rwg.walking_group_id,
             rwg.user_id,
+            wg.walking_group_name,
             u.user_name,
             rwg.register_walking_group_state
         FROM register_walking_group rwg
         JOIN user u ON (rwg.user_id = u.user_id)
-        WHERE rwg.user_id = #{userId}
+        JOIN walking_group wg ON wg.walking_group_id = rwg.walking_group_id
+        WHERE rwg.register_walking_group_id = #{registerWalkingGroupId}
+    </select>
+
+    <select id="selectGroupUsers" resultType="com.pettory.pettory.user.query.dto.UserInfoResponse">
+        SELECT
+            u.user_id,
+            u.user_email
+        FROM user u
+        JOIN register_walking_group rwg ON rwg.user_id = u.user_id
+        WHERE rwg.walking_group_id = #{walkingGroupId}
+        AND rwg.register_walking_group_state = 'ACTIVE'
+    </select>
+
+    <select id="countGroupUsers" resultType="long">
+        SELECT COUNT(*)
+        FROM user u
+        JOIN register_walking_group rwg ON u.user_id = rwg.user_id
+        WHERE rwg.walking_group_id = #{walkingGroupId}
+        AND rwg.register_walking_group_state = 'ACTIVE'
     </select>
 </mapper>

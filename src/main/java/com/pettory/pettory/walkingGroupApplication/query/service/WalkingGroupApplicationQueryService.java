@@ -33,11 +33,11 @@ public class WalkingGroupApplicationQueryService {
     }
 
     @Transactional(readOnly = true)
-    public WalkingGroupApplicationDetailResponse getWalkingGroupApplication(int walkingGroupId) {
-        List<WalkingGroupApplicationDTO> walkingGroupById = walkingGroupApplicationMapper.selectWalkingGroupById(walkingGroupId);
+    public WalkingGroupApplicationDetailResponse getWalkingGroupApplication(int walkingGroupApplicationId) {
+        WalkingGroupApplicationDTO walkingGroupById = walkingGroupApplicationMapper.selectWalkingGroupById(walkingGroupApplicationId);
 
         if(walkingGroupById == null) {
-            throw new NotFoundException("해당 코드를 가진 산책모임신청을 찾을 수 없습니다. 코드 : " + walkingGroupId);
+            throw new NotFoundException("해당 코드를 가진 산책모임신청을 찾을 수 없습니다. 코드 : " + walkingGroupApplicationId);
         }
 
         return new WalkingGroupApplicationDetailResponse(walkingGroupById);

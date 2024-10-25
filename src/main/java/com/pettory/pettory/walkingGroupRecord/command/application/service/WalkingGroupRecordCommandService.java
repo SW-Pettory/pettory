@@ -32,10 +32,10 @@ public class WalkingGroupRecordCommandService {
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        WalkingGroupRecord newWalkingGroupRecord = WalkingGroupRecordMapper.toEntity(walkingGroupRecordRequest);
-
-        WalkingGroup walkingGroup = walkingGroupRepository.findById(newWalkingGroupRecord.getWalkingGroupId())
+        WalkingGroup walkingGroup = walkingGroupRepository.findById(walkingGroupRecordRequest.getWalkingGroupId())
                 .orElseThrow(() -> new NotFoundException("해당 산책 모임을 찾을 수 없습니다."));
+
+        WalkingGroupRecord newWalkingGroupRecord = WalkingGroupRecordMapper.toEntity(walkingGroupRecordRequest);
 
         if (walkingGroup.getWalkingGroupOwner() != user.getUserId()) {
             throw new UnauthorizedException("해당 산책 모임 기록을 생성할 권한이 없습니다.");

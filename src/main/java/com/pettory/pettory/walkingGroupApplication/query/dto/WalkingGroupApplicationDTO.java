@@ -15,5 +15,6 @@ public class WalkingGroupApplicationDTO {
     private String walkingGroupName;
     private String userName;
     private String walkingGroupApprovalState;
+    private int userId;
     private LocalDateTime walkingGroupApplicationInsertDatetime;
 }

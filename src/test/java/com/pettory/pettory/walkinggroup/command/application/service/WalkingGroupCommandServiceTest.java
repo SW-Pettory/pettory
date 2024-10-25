@@ -78,8 +78,7 @@ class WalkingGroupCommandServiceTest {
         WalkingGroupUpdateRequest walkingGroupRequest = new WalkingGroupUpdateRequest(
                 walkingGroupName,
                 walkingGroupInfo,
-                walkingGroupMaximumCount,
-                walkingGroupState
+                walkingGroupMaximumCount
         );
 
         Assertions.assertDoesNotThrow(

@@ -16,4 +16,6 @@ public class WalkingGroupDTO {
     private String userName;
     private int walkingGroupMaximumCount;               // 산책모임가입최대인원수
     private String walkingGroupState;                   // 산책모임상태
+    private boolean isLeader;
+    private int walkingGroupOwner;
 }

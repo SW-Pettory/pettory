@@ -7,9 +7,11 @@ import com.pettory.pettory.user.command.domain.aggregate.User;
 import com.pettory.pettory.user.command.domain.repository.UserRepository;
 import com.pettory.pettory.walkingGroupApplication.command.application.dto.WalkingGroupApplicationCreateRequest;
 import com.pettory.pettory.walkingGroupApplication.command.application.dto.WalkingGroupApplicationUpdateRequest;
+import com.pettory.pettory.walkingGroupApplication.command.domain.aggregate.RegisterWalkingGroup;
 import com.pettory.pettory.walkingGroupApplication.command.domain.aggregate.WalkingGroupApplication;
 import com.pettory.pettory.walkingGroupApplication.command.domain.aggregate.WalkingGroupApprovalState;
 import com.pettory.pettory.walkingGroupApplication.command.domain.repository.WalkingGroupApplicationRepository;
+import com.pettory.pettory.walkingGroupApplication.command.mapper.RegisterWalkingGroupMapper;
 import com.pettory.pettory.walkingGroupApplication.command.mapper.WalkingGroupApplicationMapper;
 import com.pettory.pettory.walkinggroup.command.domain.aggregate.WalkingGroup;
 import com.pettory.pettory.walkinggroup.command.domain.repository.WalkingGroupRepository;
@@ -29,7 +31,10 @@ public class WalkingGroupApplicationCommandService {
     public int createWalkingGroupApplication(String userEmail, WalkingGroupApplicationCreateRequest walkingGroupApplicationRequest) {
         UserSecurity.validateCurrentUser(userEmail);
 
-        WalkingGroupApplication newWalkingGroupApplication = WalkingGroupApplicationMapper.toEntity(walkingGroupApplicationRequest);
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        WalkingGroupApplication newWalkingGroupApplication = WalkingGroupApplicationMapper.toEntity(walkingGroupApplicationRequest, user.getUserId());
 
         WalkingGroupApplication walkingGroupApplication = walkingGroupApplicationRepository.save(newWalkingGroupApplication);
 
@@ -55,8 +60,13 @@ public class WalkingGroupApplicationCommandService {
         }
 
         walkingGroupApplication.updateWalkingGroupApplicationDetails(
-                WalkingGroupApprovalState.valueOf(walkingGroupApplicationRequest.getWalkingGroupApprovalState())
-        );
+                WalkingGroupApprovalState.valueOf(walkingGroupApplicationRequest.getWalkingGroupApprovalState()));
+
+        if(walkingGroupApplication.getWalkingGroupApprovalState() == WalkingGroupApprovalState.ACCEPT){
+            RegisterWalkingGroup newRegisterWalkingGroup = RegisterWalkingGroupMapper.toEntity(walkingGroupApplication);
+
+            walkingGroupApplicationRepository.save(newRegisterWalkingGroup);
+        }
     }
 
     @Transactional

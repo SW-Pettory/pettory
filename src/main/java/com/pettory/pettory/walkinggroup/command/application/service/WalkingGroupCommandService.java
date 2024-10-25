@@ -25,7 +25,10 @@ public class WalkingGroupCommandService {
     public int createWalkingGroup(String userEmail, WalkingGroupCreateRequest walkingGroupRequest) {
         UserSecurity.validateCurrentUser(userEmail);
 
-        WalkingGroup newWalkingGroup = WalkingGroupMapper.toEntity(walkingGroupRequest);
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        WalkingGroup newWalkingGroup = WalkingGroupMapper.toEntity(walkingGroupRequest, user.getUserId());
 
         WalkingGroup walkingGroup = walkingGroupRepository.save(newWalkingGroup);
 
@@ -49,8 +52,7 @@ public class WalkingGroupCommandService {
         walkingGroup.updateWalkingGroupDetails(
                 walkingGroupRequest.getWalkingGroupName(),
                 walkingGroupRequest.getWalkingGroupInfo(),
-                walkingGroupRequest.getWalkingGroupMaximumCount(),
-                WalkingGroupState.valueOf(walkingGroupRequest.getWalkingGroupState())
+                walkingGroupRequest.getWalkingGroupMaximumCount()
         );
     }
 

@@ -21,5 +21,11 @@ public interface WalkingGroupRecordMapper {
             @Param("walkingGroupRecordState") String walkingGroupRecordState
     );
 
-    List<WalkingGroupRecordDTO> selectWalkingGroupRecordById(@Param("walkingGroupId") int walkingGroupId);
+    List<WalkingGroupRecordDTO> selectWalkingGroupRecordById(
+            @Param("offset") int offset,
+            @Param("limit") Integer limit,
+            @Param("walkingGroupId") int walkingGroupId
+    );
+
+    long countWalkingGroupRecord(@Param("walkingGroupId") int walkingGroupId);
 }

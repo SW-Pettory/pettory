@@ -4,10 +4,10 @@ import com.pettory.pettory.walkingGroupApplication.command.application.dto.Walki
 import com.pettory.pettory.walkingGroupApplication.command.domain.aggregate.WalkingGroupApplication;
 
 public class WalkingGroupApplicationMapper {
-    public static WalkingGroupApplication toEntity(WalkingGroupApplicationCreateRequest walkingGroupApplicationRequest) {
+    public static WalkingGroupApplication toEntity(WalkingGroupApplicationCreateRequest walkingGroupApplicationRequest, Long userId) {
         return WalkingGroupApplication.create(
                 walkingGroupApplicationRequest.getWalkingGroupId(),
-                walkingGroupApplicationRequest.getUserId()
+                userId
         );
     }
 }
