@@ -1,5 +1,6 @@
 package com.pettory.pettory.walkinggroup.query.controller;
 
+import com.pettory.pettory.security.util.UserSecurity;
 import com.pettory.pettory.walkinggroup.query.dto.WalkingGroupDetailResponse;
 import com.pettory.pettory.walkinggroup.query.dto.WalkingGroupListResponse;
 import com.pettory.pettory.walkinggroup.query.service.WalkingGroupQueryService;
@@ -35,7 +36,9 @@ public class WalkingGroupQueryController {
     @GetMapping("/{walkingGroupId}")
     public ResponseEntity<WalkingGroupDetailResponse> getWalkingGroup(@PathVariable int walkingGroupId) {
 
-        WalkingGroupDetailResponse response = walkingGroupQueryService.getWalkingGroup(walkingGroupId);
+        String currentUserEmail = UserSecurity.getCurrentUserEmail();
+
+        WalkingGroupDetailResponse response = walkingGroupQueryService.getWalkingGroup(currentUserEmail, walkingGroupId);
 
         return ResponseEntity.ok(response);
 

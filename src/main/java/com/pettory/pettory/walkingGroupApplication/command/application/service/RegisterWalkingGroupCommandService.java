@@ -54,21 +54,21 @@ public class RegisterWalkingGroupCommandService {
 
     }
 
-    @Transactional
-    public void acceptWalkingGroup(int walkingGroupApplicationId, WalkingGroupApplicationRequest walkingGroupApplicationRequest) {
-
-        WalkingGroupApplication walkingGroupApplication = walkingGroupApplicationRepository.findById(walkingGroupApplicationId)
-                .orElseThrow(() -> new NotFoundException("해당 아이디에 맞는 산책모임이 없습니다. id : " + walkingGroupApplicationId));
-
-        walkingGroupApplication.updateWalkingGroupApplicationDetails(WalkingGroupApprovalState.valueOf(walkingGroupApplicationRequest.getWalkingGroupApprovalState()));
-
-        if(walkingGroupApplication.getWalkingGroupApprovalState() == WalkingGroupApprovalState.ACCEPT){
-            RegisterWalkingGroup newRegisterWalkingGroup = RegisterWalkingGroupMapper.toEntity(walkingGroupApplication);
-
-            registerWalkingGroupRepository.save(newRegisterWalkingGroup);
-        }
-
-    }
+//    @Transactional
+//    public void acceptWalkingGroup(int walkingGroupApplicationId, WalkingGroupApplicationRequest walkingGroupApplicationRequest) {
+//
+//        WalkingGroupApplication walkingGroupApplication = walkingGroupApplicationRepository.findById(walkingGroupApplicationId)
+//                .orElseThrow(() -> new NotFoundException("해당 아이디에 맞는 산책모임이 없습니다. id : " + walkingGroupApplicationId));
+//
+//        walkingGroupApplication.updateWalkingGroupApplicationDetails(WalkingGroupApprovalState.valueOf(walkingGroupApplicationRequest.getWalkingGroupApprovalState()));
+//
+//        if(walkingGroupApplication.getWalkingGroupApprovalState() == WalkingGroupApprovalState.ACCEPT){
+//            RegisterWalkingGroup newRegisterWalkingGroup = RegisterWalkingGroupMapper.toEntity(walkingGroupApplication);
+//
+//            registerWalkingGroupRepository.save(newRegisterWalkingGroup);
+//        }
+//
+//    }
 
 
 }

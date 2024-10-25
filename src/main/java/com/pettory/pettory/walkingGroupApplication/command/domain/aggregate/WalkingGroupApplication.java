@@ -30,15 +30,15 @@ public class WalkingGroupApplication {
     private LocalDateTime walkingGroupApprovalUpdateDatetime;
     private LocalDateTime walkingGroupApplicationDeleteDatetime;
     private int walkingGroupId;
-    private int userId;
+    private Long userId;
 
 
-    private WalkingGroupApplication(int walkingGroupId, int userId) {
+    private WalkingGroupApplication(int walkingGroupId, Long userId) {
         this.walkingGroupId = walkingGroupId;
         this.userId = userId;
     }
 
-    public static WalkingGroupApplication create(int walkingGroupId, int userId) {
+    public static WalkingGroupApplication create(int walkingGroupId, Long userId) {
         return new WalkingGroupApplication(walkingGroupId, userId);
     }
 

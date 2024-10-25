@@ -21,7 +21,4 @@ public class WalkingGroupUpdateRequest {
     @Min(value = 2)
     @Schema(description = "산책모임가입최대인원")
     private final int walkingGroupMaximumCount;
-    @Schema(description = "산책모임상태", example = "APPLICATION")
-    @NotNull
-    private final String walkingGroupState;
 }

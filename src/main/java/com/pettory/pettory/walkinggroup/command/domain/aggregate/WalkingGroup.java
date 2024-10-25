@@ -33,23 +33,22 @@ public class WalkingGroup {
     @LastModifiedDate
     private LocalDateTime walkingGroupUpdateDatetime;
     private LocalDateTime walkingGroupDeleteDatetime;
-    private int walkingGroupOwner;
+    private Long walkingGroupOwner;
 
-    public WalkingGroup(String walkingGroupName, String walkingGroupInfo, int walkingGroupMaximumCount, int walkingGroupOwner) {
+    public WalkingGroup(String walkingGroupName, String walkingGroupInfo, int walkingGroupMaximumCount, Long walkingGroupOwner) {
         this.walkingGroupName = walkingGroupName;
         this.walkingGroupInfo = walkingGroupInfo;
         this.walkingGroupMaximumCount = walkingGroupMaximumCount;
         this.walkingGroupOwner = walkingGroupOwner;
     }
 
-    public static WalkingGroup create(String walkingGroupName, String walkingGroupInfo, int walkingGroupMaximumCount, int walkingGroupOwner) {
+    public static WalkingGroup create(String walkingGroupName, String walkingGroupInfo, int walkingGroupMaximumCount, Long walkingGroupOwner) {
         return new WalkingGroup(walkingGroupName, walkingGroupInfo, walkingGroupMaximumCount,walkingGroupOwner);
     }
 
-    public void updateWalkingGroupDetails(String walkingGroupName, String walkingGroupInfo, int walkingGroupMaximumCount, WalkingGroupState walkingGroupState) {
+    public void updateWalkingGroupDetails(String walkingGroupName, String walkingGroupInfo, int walkingGroupMaximumCount) {
         this.walkingGroupName = walkingGroupName;
         this.walkingGroupInfo = walkingGroupInfo;
         this.walkingGroupMaximumCount = walkingGroupMaximumCount;
-        this.walkingGroupState = walkingGroupState;
     }
 }

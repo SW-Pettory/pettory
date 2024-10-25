@@ -15,7 +15,7 @@ public interface WalkingGroupApplicationMapper {
 
     long countWalkingGroupApplications(@Param("walkingGroupApprovalState") String walkingGroupApprovalState);
 
-    List<WalkingGroupApplicationDTO> selectWalkingGroupById(
-            @Param("walkingGroupId") int walkingGroupId
+    WalkingGroupApplicationDTO selectWalkingGroupById(
+            @Param("walkingGroupApplicationId") int walkingGroupApplicationId
     );
 }

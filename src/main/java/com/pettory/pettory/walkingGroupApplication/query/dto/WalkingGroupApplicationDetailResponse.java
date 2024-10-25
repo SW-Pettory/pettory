@@ -8,9 +8,9 @@ import java.util.List;
 @Getter
 @Schema(description = "산책 모임 신청 상세 정보")
 public class WalkingGroupApplicationDetailResponse {
-    private List<WalkingGroupApplicationDTO> walkingGroupApplicationById;
+    private WalkingGroupApplicationDTO walkingGroupApplicationById;
 
-    public WalkingGroupApplicationDetailResponse(List<WalkingGroupApplicationDTO> walkingGroupApplicationById) {
+    public WalkingGroupApplicationDetailResponse(WalkingGroupApplicationDTO walkingGroupApplicationById) {
         this.walkingGroupApplicationById = walkingGroupApplicationById;
     }
 }

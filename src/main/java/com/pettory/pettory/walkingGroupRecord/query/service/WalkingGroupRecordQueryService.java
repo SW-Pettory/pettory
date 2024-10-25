@@ -38,15 +38,24 @@ public class WalkingGroupRecordQueryService {
     }
 
     @Transactional(readOnly = true)
-    public WalkingGroupRecordDetailResponse getWalkingGroupRecordById(int walkingGroupId) {
+    public WalkingGroupRecordDetailResponse getWalkingGroupRecordsById(Integer page, Integer size, int walkingGroupId) {
 
-        List<WalkingGroupRecordDTO> walkingGroupRecord = walkingGroupRecordMapper.selectWalkingGroupRecordById(walkingGroupId);
+        int offset = (page - 1) * size;
+
+        List<WalkingGroupRecordDTO> walkingGroupRecord = walkingGroupRecordMapper.selectWalkingGroupRecordById(offset, size, walkingGroupId);
+
+        long totalItems = walkingGroupRecordMapper.countWalkingGroupRecord(walkingGroupId);
 
         if(walkingGroupRecord == null) {
             throw new NotFoundException("해당 아이디를 가진 산책모임기록이 없습니다. 아이다 : " + walkingGroupId);
         }
 
-        return new WalkingGroupRecordDetailResponse(walkingGroupRecord);
+        return WalkingGroupRecordDetailResponse.builder()
+                .walkingGroupRecord(walkingGroupRecord)
+                .currentPage(page)
+                .totalPages((int) Math.ceil((double) totalItems / size ))
+                .totalItems(totalItems)
+                .build();
 
 
     }

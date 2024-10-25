@@ -11,6 +11,8 @@ public class RegisterWalkingGroupDTO {
     private int registerWalkingGroupId;
     private int walkingGroupId;
     private int userId;
+    private String walkingGroupName;
     private String userName;
+    private String walkingGroupInfo;
     private String registerWalkingGroupState;
 }

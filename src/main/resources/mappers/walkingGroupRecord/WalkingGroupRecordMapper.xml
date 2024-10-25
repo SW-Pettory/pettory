@@ -47,5 +47,12 @@
             walking_group_record_state
         FROM walking_group_record
         WHERE walking_group_id = #{walkingGroupId}
+        AND walking_group_record_state = 'ACTIVE'
+    </select>
+
+    <select id="countWalkingGroupRecord" resultType="long">
+        SELECT COUNT(*)
+        FROM walking_group_record
+        WHERE walking_group_id = #{walkingGroupId}
     </select>
 </mapper>

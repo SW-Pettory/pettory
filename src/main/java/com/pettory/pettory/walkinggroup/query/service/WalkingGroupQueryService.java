@@ -1,6 +1,8 @@
 package com.pettory.pettory.walkinggroup.query.service;
 
 import com.pettory.pettory.exception.NotFoundException;
+import com.pettory.pettory.security.util.UserSecurity;
+import com.pettory.pettory.user.query.mapper.UserMapper;
 import com.pettory.pettory.walkinggroup.query.dto.WalkingGroupDTO;
 import com.pettory.pettory.walkinggroup.query.dto.WalkingGroupDetailResponse;
 import com.pettory.pettory.walkinggroup.query.dto.WalkingGroupListResponse;
@@ -16,6 +18,7 @@ import java.util.List;
 public class WalkingGroupQueryService {
 
     private final WalkingGroupMapper walkingGroupMapper;
+    private final UserMapper userMapper;
 
     /* 산책 모임 조회 */
     @Transactional(readOnly = true)
@@ -35,14 +38,28 @@ public class WalkingGroupQueryService {
 
     /* 산책 모임 상세 조회 */
     @Transactional(readOnly = true)
-    public WalkingGroupDetailResponse getWalkingGroup(int walkingGroupId) {
+    public WalkingGroupDetailResponse getWalkingGroup(String userEmail, int walkingGroupId) {
+
+        UserSecurity.validateCurrentUser(userEmail);
+
+        // 로그인 회원 id 조회
+        Long userId = userMapper.findUserIdByEmail(userEmail).getUserId();
+
         WalkingGroupDTO walkingGroup = walkingGroupMapper.selectWalkingGroupById(walkingGroupId);
 
         if(walkingGroup == null) {
             throw new NotFoundException("해당 아이디를 가진 산책 모임을 찾지 못했습니다. 산책 모임 아이디 : " + walkingGroupId);
         }
 
-        return new WalkingGroupDetailResponse(walkingGroup);
+        Boolean isLeader = false;
+        if(userId.equals(walkingGroup.getWalkingGroupOwner())) {
+            isLeader = true;
+        }
+
+        return WalkingGroupDetailResponse.builder()
+                .walkingGroup(walkingGroup)
+                .isLeader(isLeader)
+                .build();
 
     }
 }

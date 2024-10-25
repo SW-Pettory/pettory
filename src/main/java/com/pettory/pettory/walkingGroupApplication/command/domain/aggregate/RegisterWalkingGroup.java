@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@SQLDelete(sql = "UPDATE register_walking_group SET register_walking_group_delete_datetime = now() WHERE register_walking_group_id = ?")
+@SQLDelete(sql = "UPDATE register_walking_group SET register_walking_group_state = 'DELETE', register_walking_group_delete_datetime = now() WHERE register_walking_group_id = ?")
 public class RegisterWalkingGroup {
 
     @Id
@@ -25,7 +25,7 @@ public class RegisterWalkingGroup {
     private int walkingGroupId;
     @Enumerated(value = EnumType.STRING)
     private RegisterWalkingGroupState registerWalkingGroupState = RegisterWalkingGroupState.ACTIVE;
-    private int userId;
+    private Long userId;
     @CreatedDate
     private LocalDateTime registerWalkingGroupInsertDatetime;
     @Column(insertable = false)
@@ -33,11 +33,11 @@ public class RegisterWalkingGroup {
     private LocalDateTime registerWalkingGroupUpdateDatetime;
     private LocalDateTime registerWalkingGroupDeleteDatetime;
 
-    public static RegisterWalkingGroup create(int walkingGroupId, int userId) {
+    public static RegisterWalkingGroup create(int walkingGroupId, Long userId) {
         return new RegisterWalkingGroup(walkingGroupId, userId);
     }
 
-    public RegisterWalkingGroup(int walkingGroupId, int userId) {
+    public RegisterWalkingGroup(int walkingGroupId, Long userId) {
         this.walkingGroupId = walkingGroupId;
         this.userId = userId;
     }

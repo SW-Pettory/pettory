@@ -36,11 +36,13 @@ public class WalkingGroupRecordQueryController {
 
     @Operation(summary = "특정 산책 모임 기록 조회", description = "산책 모임 아이디를 입력받아 특정 산책 모임의 기록을 조회한다.")
     @GetMapping("/{walkingGroupId}")
-    public ResponseEntity<WalkingGroupRecordDetailResponse> getWalkingGroupRecordById(
+    public ResponseEntity<WalkingGroupRecordDetailResponse> getWalkingGroupRecordsById(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
             @PathVariable int walkingGroupId
     ) {
 
-        WalkingGroupRecordDetailResponse response = walkingGroupRecordQueryService.getWalkingGroupRecordById(walkingGroupId);
+        WalkingGroupRecordDetailResponse response = walkingGroupRecordQueryService.getWalkingGroupRecordsById(page, size, walkingGroupId);
 
         return ResponseEntity.ok(response);
 
