@@ -4,9 +4,7 @@ import com.pettory.pettory.exception.BadJoinException;
 import com.pettory.pettory.exception.NotFoundException;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingDeliveryInfoRequest;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingParticipationRequest;
-import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
-import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationUser;
-import com.pettory.pettory.jointshopping.command.domain.aggregate.ProvisionRecord;
+import com.pettory.pettory.jointshopping.command.domain.aggregate.*;
 import com.pettory.pettory.jointshopping.command.domain.service.JointShoppingGroupDomainService;
 import com.pettory.pettory.jointshopping.command.domain.service.JointShoppingParticipationDomainService;
 import com.pettory.pettory.jointshopping.command.domain.service.ProvisionRecordDomainService;
@@ -77,7 +75,7 @@ public class JointShoppingParticipationApplicationService {
 
     /* 공동구매 참가 취소 */
     @Transactional
-    public void deleteParticipation(String userEmail, Long participationNum) {
+    public void deleteParticipation(String userEmail, Long jointShoppingGroupNum) {
         UserSecurity.validateCurrentUser(userEmail);
 
         // 회원 정보 확인
@@ -86,14 +84,19 @@ public class JointShoppingParticipationApplicationService {
 
         /* 모임이 참가 모집중인 상태인지 체크*/
         // 모임 찾기
-        JointShoppingGroup jointShoppingGroup = jointShoppingParticipationDomainService.findGroup(participationNum);
+        JointShoppingGroup jointShoppingGroup = jointShoppingGroupDomainService.findGroup(jointShoppingGroupNum);
+
         // 상태가 모집중이 아니면 취소 불가
         jointShoppingGroupDomainService.checkProductsStateRecruitment(jointShoppingGroup);
 
         /* 결제 환불 기능 여기에 추가*/
 
+        // 그룹 번호와 유저 번호로 도메인 객체 반환
+        JointShoppingParticipationUser jointShoppingParticipationUser
+                = jointShoppingParticipationDomainService.findByJointShoppingGroupAndUserAndParticipationState(jointShoppingGroup, user, JointShoppingParticipationState.ACTIVE);
+
         /* soft delete*/
-        jointShoppingParticipationDomainService.deleteParticipation(participationNum);
+        jointShoppingParticipationDomainService.deleteParticipation(jointShoppingParticipationUser.getJointShoppingParticipationUserListNum());
     }
 
     /* 공동구매 참가자 물품 배송 정보 등록(수정) */

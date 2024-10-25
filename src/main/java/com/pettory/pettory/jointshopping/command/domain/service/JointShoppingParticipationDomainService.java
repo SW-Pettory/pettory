@@ -5,6 +5,7 @@ import com.pettory.pettory.exception.NotFoundException;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingDeliveryInfoRequest;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingParticipationRequest;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
+import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationState;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationUser;
 import com.pettory.pettory.jointshopping.command.domain.repository.JointShoppingParticipationRepository;
 import com.pettory.pettory.jointshopping.command.mapper.JointShoppingParticipationUserMapper;
@@ -89,5 +90,8 @@ public class JointShoppingParticipationDomainService {
         return jointShoppingParticipationUser.getJointShoppingGroup();
     }
 
-
+    // 그룹 번호와 유저 번호로 도메인 객체 반환
+    public JointShoppingParticipationUser findByJointShoppingGroupAndUserAndParticipationState(JointShoppingGroup jointShoppingGroup, User user, JointShoppingParticipationState active) {
+        return jointShoppingParticipationRepository.findByJointShoppingGroupAndUserAndParticipationState(jointShoppingGroup, user, active);
+    }
 }

@@ -45,14 +45,14 @@ public class JointShoppingParticipationCommandController {
 
     @Operation(summary = "공동구매 참가 취소", description = "회원이 공동구매 참가 취소한다. 참가방의 인원이 가득차면 취소가 불가능하다.")
     @ApiResponse(responseCode = "204", description = "공동구매 참가 취소 성공")
-    @DeleteMapping("/participation/{participationNum}")
+    @DeleteMapping("/participation/{jointShoppingGroupNum}/users")
     public ResponseEntity<CommonResponseDTO> deleteParticipation(
-            @PathVariable @Schema(example = "11") final Long participationNum
+            @PathVariable  final Long jointShoppingGroupNum
     ) {
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        jointShoppingParticipationApplicationService.deleteParticipation(currentUserEmail, participationNum);
-        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매 참가 취소 성공", participationNum);
+        jointShoppingParticipationApplicationService.deleteParticipation(currentUserEmail, jointShoppingGroupNum);
+        CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.OK.value(), "공동구매 참가 취소 성공", jointShoppingGroupNum);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

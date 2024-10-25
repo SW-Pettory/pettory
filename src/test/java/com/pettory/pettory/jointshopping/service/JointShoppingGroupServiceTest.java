@@ -229,7 +229,7 @@ public class JointShoppingGroupServiceTest {
         Assertions.assertDoesNotThrow(
 
                 () -> {
-                    JointShoppingGroupDetailResponse response = jointShoppingGroupQueryService.getGroup(currentUserEmail, 7L);
+                    JointShoppingGroupDetailResponse response = jointShoppingGroupQueryService.getGroup("currentUserEmail", 7L);
                     System.out.println(response.getGroup());
                 }
         );
