@@ -38,7 +38,10 @@ public class SelectChattingResponse {
     @Schema(description = "유저 아이디 번호")
     private int userId;
 
+    @Schema(description = "유저 닉네임")
+    private String userNickname;
+
     public SelectChattingResponse() {
-        
+
     }
 }
