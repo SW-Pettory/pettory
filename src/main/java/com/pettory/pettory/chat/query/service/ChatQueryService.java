@@ -18,4 +18,8 @@ public class ChatQueryService {
     public List<SelectChattingResponse> selectChatRoomChatting(Integer chatRoomUniqueNum) {
         return chattingMapper.selectChatRoomChatting(chatRoomUniqueNum);
     }
+
+    public int checkChatroom(Integer chatroomTypeNum) {
+        return chattingMapper.checkChatroom(chatroomTypeNum);
+    }
 }

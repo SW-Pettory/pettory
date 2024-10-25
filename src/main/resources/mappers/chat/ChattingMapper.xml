@@ -6,17 +6,26 @@
 
     <!-- Alias 설정이 없으면... 풀로 주어야 함 -->
     <select id="selectChatRoomChatting" parameterType="java.lang.Integer" resultType="com.pettory.pettory.chat.query.dto.SelectChattingResponse">
-        SELECT
-               chatting_unique_num,
-               chatting_chatroom_unique_num,
-               chatting_content,
-               chatting_insert_time,
-               chatting_update_time,
-               chatting_delete_time,
-               chatting_state,
-               user_id
-          FROM chatting_table
-         WHERE chatting_chatroom_unique_num = #{chattingChatRoomUniqueNum}
+        <![CDATA[
+        SELECT a.chatting_unique_num,
+               a.chatting_chatroom_unique_num,
+               a.chatting_content,
+               a.chatting_insert_time,
+               a.chatting_update_time,
+               a.chatting_delete_time,
+               a.chatting_state,
+               a.user_id,
+               b.user_nickname
+        FROM chatting_table a
+                 JOIN user b ON (a.user_id = b.user_id)
+        WHERE chatting_chatroom_unique_num = #{chattingChatRoomUniqueNum}
+        ]]>
+    </select>
+
+    <select id="checkChatroom" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM chatroom_table
+        WHERE chatroom_type_num = #{chatroomTypeNum}
     </select>
 
 </mapper>

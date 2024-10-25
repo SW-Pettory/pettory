@@ -38,8 +38,8 @@ public class ChatCommandService {
 
     /* 3. 채팅 내용 DB 저장 */
     @Transactional
-    public void registerChatting(InsertChattingRequest insertChattingRequest) {
-        chattingRepository.save(chatModelMapper.map(insertChattingRequest, Chatting.class));
+    public Chatting registerChatting(InsertChattingRequest insertChattingRequest) {
+        return chattingRepository.save(chatModelMapper.map(insertChattingRequest, Chatting.class));
     }
 
     /* 4. 채팅 내용 수정 */
@@ -48,8 +48,8 @@ public class ChatCommandService {
         Chatting chatting = chattingRepository.findById(modifyChattingRequest.getChattingUniqueNum()).orElseThrow(IllegalArgumentException::new);
         /* 채팅 수정 메소드 */
         chatting.modifyChatting(modifyChattingRequest.getChattingContent(),
-                                modifyChattingRequest.getChattingUpdateTime(),
-                                modifyChattingRequest.getChattingState());
+                modifyChattingRequest.getChattingUpdateTime(),
+                modifyChattingRequest.getChattingState());
         return chatting;
     }
 
@@ -59,7 +59,7 @@ public class ChatCommandService {
         Chatting chatting = chattingRepository.findById(softDeleteChattingRequest.getChattingUniqueNum()).orElseThrow(IllegalArgumentException::new);
         /* 채팅 얇은 삭제 기능 메소드 : 상태 변경, deleteTime 삽입 */
         chatting.softDeleteChatting(softDeleteChattingRequest.getChattingState(),
-                                    softDeleteChattingRequest.getChattingDeleteTime());
+                softDeleteChattingRequest.getChattingDeleteTime());
     }
 
     /* 5-2. 채팅 리얼 삭제 */
