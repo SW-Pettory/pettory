@@ -12,7 +12,5 @@ import java.util.List;
 @Schema(description = "공동구매모임회원 응답")
 public class JointShoppingUserListResponse {
     private List<UserInfoResponse> groupUserList;
-    private int currentPage;            // 현재 페이지
-    private int totalPages;             // 전체 페이지 수
     private long totalItems;            // 총 아이템 수
 }

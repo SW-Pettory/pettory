@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 @Getter
 @Setter
 @ToString
@@ -21,6 +24,8 @@ public class JointShoppingGroupDTO {
     private Integer jointShoppingParticipationMaximumCount;
     private String hostCourierCode;
     private String hostInvoiceNum;
+    private LocalDate jointShoppingGroupInsertDatetime;
+    private String jointShoppingGroupState;
     private JointShoppingCategoryDTO category;
     private Long userId;
 }

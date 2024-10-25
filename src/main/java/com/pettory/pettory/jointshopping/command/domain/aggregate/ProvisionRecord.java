@@ -29,15 +29,18 @@ public class ProvisionRecord {
     @CreatedDate
     private LocalDateTime provisionRecordInsertDatetime;
     private LocalDateTime provisionCompleteDatetime;
-    private Long jointShoppingGroupNum;
 
-    private ProvisionRecord(Integer provisionCost, Long jointShoppingGroupNum){
+    @ManyToOne
+    @JoinColumn(name = "joint_shopping_group_num", nullable = false)
+    JointShoppingGroup jointShoppingGroup;
+
+    private ProvisionRecord(Integer provisionCost, JointShoppingGroup jointShoppingGroup){
         this.provisionCost = provisionCost;
-        this.jointShoppingGroupNum = jointShoppingGroupNum;
+        this.jointShoppingGroup = jointShoppingGroup;
     }
 
-    public static ProvisionRecord create(Integer provisionCost, Long jointShoppingGroupNum) {
-        return new ProvisionRecord(provisionCost, jointShoppingGroupNum);
+    public static ProvisionRecord create(Integer provisionCost, JointShoppingGroup jointShoppingGroup) {
+        return new ProvisionRecord(provisionCost, jointShoppingGroup);
     }
 
     /* 지급완료 상태로 변경하는 메소드 */

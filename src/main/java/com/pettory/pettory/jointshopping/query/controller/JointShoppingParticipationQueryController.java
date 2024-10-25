@@ -23,7 +23,7 @@ public class JointShoppingParticipationQueryController {
 
     @Operation(summary = "현재 공동구매모임 참가의 전체 사용자 목록 조회", description = "현재 공동구매모임 참가의 전체 사용자 목록을 조회한다.")
     @ApiResponse(responseCode = "200", description = "현재 공동구매모임 참가의 전체 사용자 목록 조회 성공")
-    @GetMapping("/participation/{groupNum}")
+    @GetMapping("/participation/users/{groupNum}")
     public ResponseEntity<JointShoppingUserListResponse> getParticipants(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,

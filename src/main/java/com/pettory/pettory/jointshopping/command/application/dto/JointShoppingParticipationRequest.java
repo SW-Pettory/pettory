@@ -15,16 +15,7 @@ public class JointShoppingParticipationRequest {
     @NotNull
     private final Integer paymentCost;
 
-    private final String userCourierCode;
-
-    private final String userInvoiceNum;
-
     @Schema(example = "1")
     @NotNull
     private final Long jointShoppingGroupNum;
-
-    @Schema(example = "3")
-    @NotNull
-    private final Long userId;
-
 }

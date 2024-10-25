@@ -30,8 +30,6 @@ public class JointShoppingParticipationQueryService {
 
         return JointShoppingUserListResponse.builder()    // 이 클래스가 가지고 있는 필드값들이 메서드에 자동완성, 세팅을 여기서 함
                 .groupUserList(Users)
-                .currentPage(page)
-                .totalPages((int) Math.ceil((double) totalItems / size))
                 .totalItems(totalItems)
                 .build();
     }

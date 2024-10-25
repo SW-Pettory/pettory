@@ -1,10 +1,7 @@
 package com.pettory.pettory.jointshopping.service;
 
-import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingCategoryRequest;
-import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingGroupRequest;
 import com.pettory.pettory.jointshopping.command.application.service.JointShoppingCategoryApplicationService;
 import com.pettory.pettory.jointshopping.query.dto.JointShoppingCategoryListResponse;
-import com.pettory.pettory.jointshopping.query.dto.JointShoppingGroupListResponse;
 import com.pettory.pettory.jointshopping.query.service.JointShoppingCategoryQueryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,24 +19,16 @@ public class JointShoppingCategoryServiceTest {
     /* 카테고리 등록 테스트 */
     @Test
     void testCreateCategory() {
-        JointShoppingCategoryRequest jointShoppingCategoryRequest = new JointShoppingCategoryRequest(
-                "강아지발"
-        );
-
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingCategoryApplicationService.createCategory(jointShoppingCategoryRequest)
+                () -> jointShoppingCategoryApplicationService.createCategory("UserEmail", "강아지발")
         );
     }
 
     /* 카테고리 수정 테스트 */
     @Test
     void testUpdateCategory() {
-        JointShoppingCategoryRequest jointShoppingCategoryRequest = new JointShoppingCategoryRequest(
-                "강아지손"
-        );
-
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingCategoryApplicationService.updateCategory(11L, jointShoppingCategoryRequest)
+                () -> jointShoppingCategoryApplicationService.updateCategory("userEmail", 11L, "강아지손")
         );
     }
 
@@ -47,7 +36,7 @@ public class JointShoppingCategoryServiceTest {
     @Test
     void testDeleteCategory() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingCategoryApplicationService.deleteCategory(11L)
+                () -> jointShoppingCategoryApplicationService.deleteCategory("userEmail", 11L)
         );
     }
 

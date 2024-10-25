@@ -1,12 +1,16 @@
 package com.pettory.pettory.jointshopping.command.domain.service;
 
+import com.pettory.pettory.exception.BadJoinException;
 import com.pettory.pettory.exception.NotFoundException;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingDeliveryInfoRequest;
 import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingParticipationRequest;
+import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingGroup;
+import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationState;
 import com.pettory.pettory.jointshopping.command.domain.aggregate.JointShoppingParticipationUser;
 import com.pettory.pettory.jointshopping.command.domain.repository.JointShoppingParticipationRepository;
+import com.pettory.pettory.jointshopping.command.mapper.JointShoppingParticipationUserMapper;
+import com.pettory.pettory.user.command.domain.aggregate.User;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +20,12 @@ import java.util.List;
 public class JointShoppingParticipationDomainService {
 
     private final JointShoppingParticipationRepository jointShoppingParticipationRepository;
-    private final ModelMapper modelMapper;
 
     /* 도메인 객체를 생성하는 로직 */
-    public JointShoppingParticipationUser createParticipation(JointShoppingParticipationRequest participationRequest) {
+    public JointShoppingParticipationUser createParticipation(JointShoppingParticipationRequest participationRequest, JointShoppingGroup jointShoppingGroup, User user) {
         /* entity 생성 */
         JointShoppingParticipationUser newJointShoppingParticipationUser
-                = modelMapper.map(participationRequest, JointShoppingParticipationUser.class);
+                = JointShoppingParticipationUserMapper.toEntity(participationRequest, jointShoppingGroup, user);
 
         return newJointShoppingParticipationUser;
     }
@@ -38,10 +41,14 @@ public class JointShoppingParticipationDomainService {
     }
 
     /* 배송 정보를 수정하는 로직 */
-    public void updateDeliveryInfo(Long participationNum, JointShoppingDeliveryInfoRequest deliveryInfoRequest) {
+    public void updateDeliveryInfo(Long participationNum, JointShoppingDeliveryInfoRequest deliveryInfoRequest, JointShoppingGroup jointShoppingGroup, User user) {
         JointShoppingParticipationUser jointShoppingParticipationUser
                 = jointShoppingParticipationRepository.findById(participationNum)
                 .orElseThrow(() -> new NotFoundException("해당 번호에 맞는 참가자가 없습니다. code : " + participationNum));
+
+        if(!user.getUserId().equals(jointShoppingGroup.getUser().getUserId()) ){
+            throw new BadJoinException("방장이 아니여서 배송 정보를 입력하실 수 없습니다.");
+        }
 
         /* 수정을 위해 엔터티 정보 변경 */
         jointShoppingParticipationUser.update(
@@ -61,27 +68,30 @@ public class JointShoppingParticipationDomainService {
     }
 
     /* 현재 참가자 수를 반환하는 로직 */
-    public Integer findUserCount(Long jointShoppingGroupNum) {
-        List<JointShoppingParticipationUser> jointShoppingParticipationUserList = jointShoppingParticipationRepository.findByJointShoppingGroupNum(jointShoppingGroupNum);
+    public Integer findUserCount(JointShoppingGroup jointShoppingGroup) {
+        List<JointShoppingParticipationUser> jointShoppingParticipationUserList = jointShoppingParticipationRepository.findByJointShoppingGroup(jointShoppingGroup);
 
         return jointShoppingParticipationUserList.size();
     }
 
     /* 물품 수령한 참가자 수를 반환하는 로직 */
-    public Integer findReceiptUserCount(Long jointShoppingGroupNum) {
-        List<JointShoppingParticipationUser> jointShoppingParticipationUserList = jointShoppingParticipationRepository.findByProductsReceiptYnTrue();
+    public Integer findReceiptUserCount(JointShoppingGroup jointShoppingGroup) {
+        List<JointShoppingParticipationUser> jointShoppingParticipationUserList = jointShoppingParticipationRepository.findByJointShoppingGroupAndProductsReceiptYnTrue(jointShoppingGroup);
 
         return jointShoppingParticipationUserList.size();
     }
 
     /* 가입함 모임 찾기 */
-    public Long findGroup(Long participationNum) {
+    public JointShoppingGroup findGroup(Long participationNum) {
         JointShoppingParticipationUser jointShoppingParticipationUser
                 = jointShoppingParticipationRepository.findById(participationNum)
                 .orElseThrow(() -> new NotFoundException("해당 번호에 맞는 참가자가 없습니다. code : " + participationNum));
 
-        return jointShoppingParticipationUser.getJointShoppingGroupNum();
+        return jointShoppingParticipationUser.getJointShoppingGroup();
     }
 
-
+    // 그룹 번호와 유저 번호로 도메인 객체 반환
+    public JointShoppingParticipationUser findByJointShoppingGroupAndUserAndParticipationState(JointShoppingGroup jointShoppingGroup, User user, JointShoppingParticipationState active) {
+        return jointShoppingParticipationRepository.findByJointShoppingGroupAndUserAndParticipationState(jointShoppingGroup, user, active);
+    }
 }

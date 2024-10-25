@@ -6,7 +6,6 @@ import com.pettory.pettory.jointshopping.command.application.dto.JointShoppingPa
 import com.pettory.pettory.jointshopping.command.application.service.JointShoppingParticipationApplicationService;
 import com.pettory.pettory.jointshopping.query.dto.JointShoppingParticipationDeliveryInfoResponse;
 import com.pettory.pettory.jointshopping.query.dto.JointShoppingUserListResponse;
-import com.pettory.pettory.jointshopping.query.dto.ProvisionRecordResponse;
 import com.pettory.pettory.jointshopping.query.service.JointShoppingParticipationQueryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,10 +30,7 @@ public class JointShoppingParticipationServiceTest {
         return Stream.of(
                 Arguments.of(
                         10000,
-                        null,
-                        null,
-                        7L,
-                        5L
+                        7L
                 )
         );
     }
@@ -63,20 +59,16 @@ public class JointShoppingParticipationServiceTest {
     @ParameterizedTest
     @MethodSource("getCreateParticipation")
     void testCreateGroup(
-            Integer paymentCost, String userCourierCode, String userInvoiceNum,
-            Long jointShoppingGroupNum, Long userId
+            Integer paymentCost, Long jointShoppingGroupNum
     ) {
 
         JointShoppingParticipationRequest jointShoppingParticipationRequest = new JointShoppingParticipationRequest(
                 paymentCost,
-                userCourierCode,
-                userInvoiceNum,
-                jointShoppingGroupNum,
-                userId
+                jointShoppingGroupNum
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingParticipationApplicationService.createParticipation(jointShoppingParticipationRequest)
+                () -> jointShoppingParticipationApplicationService.createParticipation("userEmail", jointShoppingParticipationRequest)
         );
     }
 
@@ -84,7 +76,7 @@ public class JointShoppingParticipationServiceTest {
     @Test
     void testDeleteParticipation() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingParticipationApplicationService.deleteParticipation(6L)
+                () -> jointShoppingParticipationApplicationService.deleteParticipation("userEmail", 6L)
         );
     }
 
@@ -101,7 +93,7 @@ public class JointShoppingParticipationServiceTest {
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingParticipationApplicationService.updateDeliveryInfo(participationNum, jointShoppingDeliveryInfoRequest)
+                () -> jointShoppingParticipationApplicationService.updateDeliveryInfo("userEmail", participationNum, jointShoppingDeliveryInfoRequest)
         );
     }
 
@@ -109,7 +101,7 @@ public class JointShoppingParticipationServiceTest {
     @Test
     void testUpdateProductsReceipt() {
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingParticipationApplicationService.updateProductsReceipt(5L)
+                () -> jointShoppingParticipationApplicationService.updateProductsReceipt("userEmail", 5L)
         );
     }
 

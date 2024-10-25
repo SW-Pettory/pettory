@@ -1,5 +1,6 @@
 package com.pettory.pettory.jointshopping.command.domain.aggregate;
 
+import com.pettory.pettory.user.command.domain.aggregate.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class JointShoppingParticipationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jointShoppingParticipationUserListNum;
-    private Long paymentCost;
+    private Integer paymentCost;
     @Enumerated(value = EnumType.STRING)
     private JointShoppingParticipationState participationState = JointShoppingParticipationState.ACTIVE;
     private String userCourierCode;
@@ -32,8 +33,24 @@ public class JointShoppingParticipationUser {
     @CreatedDate
     private LocalDateTime jointShoppingParticipationInsertDatetime;
     private LocalDateTime jointShoppingParticipationDeleteDatetime;
-    private Long jointShoppingGroupNum;
-    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "joint_shopping_group_num", nullable = false)
+    JointShoppingGroup jointShoppingGroup;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
+    public JointShoppingParticipationUser(Integer paymentCost, JointShoppingGroup jointShoppingGroup, User user) {
+        this.paymentCost = paymentCost;
+        this.jointShoppingGroup = jointShoppingGroup;
+        this.user = user;
+    }
+
+    public static JointShoppingParticipationUser create(Integer paymentCost, JointShoppingGroup jointShoppingGroup, User user) {
+        return new JointShoppingParticipationUser(paymentCost, jointShoppingGroup, user);
+    }
 
     // 물품 배송 정보를 변경하는 메소드
     public void update(String courierCode, String invoiceNum) {

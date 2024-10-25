@@ -1,5 +1,6 @@
 package com.pettory.pettory.jointshopping.command.domain.aggregate;
 
+import com.pettory.pettory.user.command.domain.aggregate.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,8 +28,23 @@ public class JointShoppingGroupUser {
     @CreatedDate
     private LocalDateTime jointShoppingUserInsertDatetime;
     private LocalDateTime jointShoppingUserDeleteDatetime;
-    private Long jointShoppingGroupNum;
-    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "joint_shopping_group_num", nullable = false)
+    JointShoppingGroup jointShoppingGroup;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
+    public JointShoppingGroupUser(JointShoppingGroup jointShoppingGroup, User user) {
+        this.jointShoppingGroup = jointShoppingGroup;
+        this.user = user;
+    }
+
+    public static JointShoppingGroupUser create(JointShoppingGroup jointShoppingGroup, User user) {
+        return new JointShoppingGroupUser(jointShoppingGroup,user);
+    }
 
     public void changeResignYn() {
         this.resignYn = Boolean.TRUE;
