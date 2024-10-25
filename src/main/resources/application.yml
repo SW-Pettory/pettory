@@ -13,7 +13,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: mypettory@gmail.com
-    password:
+    password: ${spring.mail.password}
     properties:
       mail:
         smtp:
@@ -27,26 +27,34 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+  config:
+    import: "optional:application-secrets.yml"
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
   mapper-locations: mappers/**/*.xml
+#  type-aliases-package: com.ohgiraffers.cqrs.product.query.dto
+
+image:
+  image-url-que: http://localhost:8080/questionimgs/
+  image-dir-que: src/main/resources/static/counseling/question/questionimgs/
+  image-url-ans: http://localhost:8080/answerimgs/
+  image-dir-ans: src/main/resources/static/counseling/answer/answerimgs/
 
 springdoc:
   packages-to-scan: com.pettory.pettory
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
 
-  # type-aliases-package: com.ohgiraffers.cqrs.product.query.dto
-
-  # image:
-  # image-url: http://localhost:8080/productimgs/
-  # image-dir: src/main/resources/static/productimgs
-
 # TODO: 테스트를 위해 유효시간을 7일(2024/09/28 기준)으로 설정. 추후 변경 필요
 token:
   secret: z9Hwd2bJp8hffAvC8HM8E7U13IgHEXldNH1JyG88hqXxvk05afj0CHFazkGqxq2ZPRpWNwqSBWp4TDHpLC7KNA==
   expiration_time : 604800000
+
+
+
+
+
 
 

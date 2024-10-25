@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface ChattingMapper {
     List<SelectChattingResponse> selectChatRoomChatting(Integer chatRoomUniqueNum);
+
+    int checkChatroom(Integer chatroomTypeNum);
 }

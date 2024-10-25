@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 이메일 인증용 비밀번호 ###
+application-secrets.yml

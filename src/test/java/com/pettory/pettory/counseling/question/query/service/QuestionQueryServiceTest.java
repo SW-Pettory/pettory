@@ -1,6 +1,6 @@
 package com.pettory.pettory.counseling.question.query.service;
 
-import com.pettory.pettory.counseling.question.query.dto.QuestionQueryDTO;
+import com.pettory.pettory.counseling.question.query.dto.QuestionDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class QuestionQueryServiceTest {
     void testFindAllQuestions() {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    List<QuestionQueryDTO> questions = questionQueryService.findAllQuestions();
+                    List<QuestionDto> questions = questionQueryService.getQuestions();
                     questions.forEach(System.out::println);
                 }
         );
@@ -30,11 +30,11 @@ class QuestionQueryServiceTest {
 
     @DisplayName("질문 번호별 질문 조회 확인 테스트")
     @ParameterizedTest
-    @ValueSource(strings = {"1", "2"})
+    @ValueSource(strings = {"6", "7"})
     void testFindQuestionByNum(int counselingQuestionNum) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    QuestionQueryDTO question = questionQueryService.findQuestionByNum(counselingQuestionNum);
+                    QuestionDto question = questionQueryService.findQuestionByNum(counselingQuestionNum);
                     System.out.println(question);
                 }
         );
@@ -46,7 +46,7 @@ class QuestionQueryServiceTest {
     void testFindQuestionsByTitle(String counselingQuestionTitle) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    List<QuestionQueryDTO> questions = questionQueryService.findQuestionsByTitle(counselingQuestionTitle);
+                    List<QuestionDto> questions = questionQueryService.findQuestionsByTitle(counselingQuestionTitle);
                     questions.forEach(System.out::println);
                 }
         );
@@ -58,7 +58,7 @@ class QuestionQueryServiceTest {
     void testFindQuestionsByContent(String counselingQuestionContent) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    List<QuestionQueryDTO> questions = questionQueryService.findQuestionsByContent(counselingQuestionContent);
+                    List<QuestionDto> questions = questionQueryService.findQuestionsByContent(counselingQuestionContent);
                     questions.forEach(System.out::println);
                 }
         );
@@ -70,7 +70,7 @@ class QuestionQueryServiceTest {
     void testFindQuestionsByTopic(String counselingQuestionTopic) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    List<QuestionQueryDTO> questions = questionQueryService.findQuestionsByTopic(counselingQuestionTopic);
+                    List<QuestionDto> questions = questionQueryService.findQuestionsByTopic(counselingQuestionTopic);
                     questions.forEach(System.out::println);
                 }
         );
@@ -82,7 +82,7 @@ class QuestionQueryServiceTest {
     void testFindQuestionsByNickname(String userNickname) {
         Assertions.assertDoesNotThrow(
                 () -> {
-                    List<QuestionQueryDTO> questions = questionQueryService.findQuestionsByNickname(userNickname);
+                    List<QuestionDto> questions = questionQueryService.findQuestionsByNickname(userNickname);
                     questions.forEach(System.out::println);
                 }
         );

@@ -1,5 +1,6 @@
 package com.pettory.pettory.chat.query.controller;
 
+import com.pettory.pettory.chat.query.dto.CheckChatroomResponse;
 import com.pettory.pettory.chat.query.dto.SelectChattingEntityResponse;
 import com.pettory.pettory.chat.query.dto.SelectChattingResponse;
 import com.pettory.pettory.chat.query.service.ChatQueryService;
@@ -48,6 +49,24 @@ public class ChatQueryController {
                 "채팅 조회 성공", responseMap);
 
         return ResponseEntity.ok().headers(headers).body(responseMessage);
+    }
+
+    @GetMapping("/chatroom-check/{chatroomTypeNum}")
+    public ResponseEntity<CheckChatroomResponse> checkRoom(@PathVariable Integer chatroomTypeNum) {
+        /* 응답 데이터 설정 */
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+        CheckChatroomResponse checkChatroomResponse;
+
+        int checkRoom = chatQueryService.checkChatroom(chatroomTypeNum);
+
+        if(checkRoom == 0) {
+            checkChatroomResponse = new CheckChatroomResponse("NotReadyRoom");
+        } else {
+            checkChatroomResponse = new CheckChatroomResponse("ReadyRoom");
+        }
+
+        return ResponseEntity.ok().headers(headers).body(checkChatroomResponse);
     }
 
 }
