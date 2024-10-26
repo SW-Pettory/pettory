@@ -15,7 +15,6 @@ import com.pettory.pettory.user.command.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class JointShoppingGroupApplicationService {
 
     /* 공동구매모임 등록 */
     @Transactional
-    public JointShoppingGroup createGroup(String userEmail, JointShoppingGroupRequest groupRequest, MultipartFile productImg) {
+    public JointShoppingGroup createGroup(String userEmail, JointShoppingGroupRequest groupRequest) {
 
         UserSecurity.validateCurrentUser(userEmail);
 
@@ -39,7 +38,7 @@ public class JointShoppingGroupApplicationService {
         JointShoppingCategory jointShoppingCategory = jointShoppingCategoryDomainService.findCategory(groupRequest.getJointShoppingCategory());
 
         /* jointshoppinggroup 도메인 생성 로직 실행, entity 반환 */
-        JointShoppingGroup newJointShoppingGroup = jointShoppingGroupDomainService.createGroup(groupRequest, productImg, user, jointShoppingCategory);
+        JointShoppingGroup newJointShoppingGroup = jointShoppingGroupDomainService.createGroup(groupRequest, user, jointShoppingCategory);
 
         /* save 로직 실행 */
         JointShoppingGroup jointShoppingGroup = jointShoppingGroupDomainService.saveGroup(newJointShoppingGroup);
@@ -50,7 +49,7 @@ public class JointShoppingGroupApplicationService {
 
     /* 공동구매모임 수정 */
     @Transactional
-    public JointShoppingGroup updateGroup(String userEmail, Long jointShoppingGroupNum, JointShoppingGroupRequest groupRequest, MultipartFile productImg) {
+    public JointShoppingGroup updateGroup(String userEmail, Long jointShoppingGroupNum, JointShoppingGroupRequest groupRequest) {
 
         UserSecurity.validateCurrentUser(userEmail);
 
@@ -60,7 +59,7 @@ public class JointShoppingGroupApplicationService {
 
         JointShoppingCategory jointShoppingCategory = jointShoppingCategoryDomainService.findCategory(groupRequest.getJointShoppingCategory());
 
-        JointShoppingGroup jointShoppingGroup =  jointShoppingGroupDomainService.updateGroup(jointShoppingGroupNum, groupRequest, productImg, user, jointShoppingCategory);
+        JointShoppingGroup jointShoppingGroup =  jointShoppingGroupDomainService.updateGroup(jointShoppingGroupNum, groupRequest, user, jointShoppingCategory);
         return jointShoppingGroup;
     }
 

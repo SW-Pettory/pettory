@@ -31,12 +31,11 @@ public class JointShoppingGroupCommandController {
     @ApiResponse(responseCode = "201", description = "공동구매모임 등록 성공")
     @PostMapping("/groups")
     public ResponseEntity<CommonResponseDTO> createGroup(
-            @RequestPart @Valid JointShoppingGroupRequest groupRequest,
-            @RequestPart(required = false) MultipartFile productImg
+            @RequestBody JointShoppingGroupRequest groupRequest
     ) {
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        JointShoppingGroup jointShoppingGroup = jointShoppingGroupApplicationService.createGroup(currentUserEmail, groupRequest, productImg);
+        JointShoppingGroup jointShoppingGroup = jointShoppingGroupApplicationService.createGroup(currentUserEmail, groupRequest);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "공동구매모임 등록 성공", jointShoppingGroup);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
@@ -46,13 +45,12 @@ public class JointShoppingGroupCommandController {
     @ApiResponse(responseCode = "201", description = "공동구매모임 수정 성공")
     @PutMapping("/groups/{jointShoppingGroupNum}")
     public ResponseEntity<CommonResponseDTO> updateGroup(
-            @PathVariable @Schema(example = "6") final Long jointShoppingGroupNum,
-            @RequestPart @Valid JointShoppingGroupRequest groupRequest,
-            @RequestPart(required = false) MultipartFile productImg
+            @PathVariable final Long jointShoppingGroupNum,
+            @RequestBody JointShoppingGroupRequest groupRequest
     ) {
         String currentUserEmail = UserSecurity.getCurrentUserEmail();
 
-        JointShoppingGroup jointShoppingGroup = jointShoppingGroupApplicationService.updateGroup(currentUserEmail, jointShoppingGroupNum, groupRequest, productImg);
+        JointShoppingGroup jointShoppingGroup = jointShoppingGroupApplicationService.updateGroup(currentUserEmail, jointShoppingGroupNum, groupRequest);
         CommonResponseDTO successResponse = new CommonResponseDTO(HttpStatus.CREATED.value(), "공동구매모임 수정 성공", jointShoppingGroup);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);

@@ -54,10 +54,9 @@ public class JointShoppingGroup {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
-    private JointShoppingGroup(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingProductsFileDirectory, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount,JointShoppingCategory jointShoppingCategory, User user) {
+    private JointShoppingGroup(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount,JointShoppingCategory jointShoppingCategory, User user) {
         this.jointShoppingGroupName = jointShoppingGroupName;
         this.jointShoppingProducts = jointShoppingProducts;
-        this.jointShoppingProductsFileDirectory = jointShoppingProductsFileDirectory;
         this.jointShoppingInfo = jointShoppingInfo;
         this.jointShoppingCost = jointShoppingCost;
         this.jointShoppingGroupMaximumCount = jointShoppingGroupMaximumCount;
@@ -67,8 +66,8 @@ public class JointShoppingGroup {
     }
 
     // JointShoppingGroup 생성 메소드
-    public static JointShoppingGroup create(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingProductsFileDirectory, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount, JointShoppingCategory jointShoppingCategory, User user){
-        return new JointShoppingGroup(jointShoppingGroupName, jointShoppingProducts, jointShoppingProductsFileDirectory, jointShoppingInfo, jointShoppingCost, jointShoppingGroupMaximumCount, jointShoppingParticipationMaximumCount, jointShoppingCategory, user);
+    public static JointShoppingGroup create(String jointShoppingGroupName, String jointShoppingProducts, String jointShoppingInfo, Integer jointShoppingCost, Integer jointShoppingGroupMaximumCount, Integer jointShoppingParticipationMaximumCount, JointShoppingCategory jointShoppingCategory, User user){
+        return new JointShoppingGroup(jointShoppingGroupName, jointShoppingProducts, jointShoppingInfo, jointShoppingCost, jointShoppingGroupMaximumCount, jointShoppingParticipationMaximumCount, jointShoppingCategory, user);
     }
 
     // jointShoppingProductsFileDirectory 변경 메소드
