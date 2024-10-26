@@ -7,11 +7,10 @@ import com.pettory.pettory.user.command.domain.aggregate.User;
 
 public class JointShoppingGroupMapper {
 
-    public static JointShoppingGroup toEntity(JointShoppingGroupRequest groupRequest, String imageDir, User user, JointShoppingCategory category) {
+    public static JointShoppingGroup toEntity(JointShoppingGroupRequest groupRequest, User user, JointShoppingCategory category) {
         return JointShoppingGroup.create(
                 groupRequest.getJointShoppingGroupName(),
                 groupRequest.getJointShoppingProducts(),
-                imageDir,
                 groupRequest.getJointShoppingInfo(),
                 groupRequest.getJointShoppingCost(),
                 groupRequest.getJointShoppingGroupMaximumCount(),

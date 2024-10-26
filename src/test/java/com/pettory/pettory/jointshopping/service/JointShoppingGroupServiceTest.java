@@ -133,7 +133,7 @@ public class JointShoppingGroupServiceTest {
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.createGroup("userEmail", jointShoppingGroupRequest, productImg)
+                () -> jointShoppingGroupApplicationService.createGroup("userEmail", jointShoppingGroupRequest)
         );
     }
 
@@ -159,7 +159,7 @@ public class JointShoppingGroupServiceTest {
         );
 
         Assertions.assertDoesNotThrow(
-                () -> jointShoppingGroupApplicationService.updateGroup("userEmail", jointShoppingGroupNum, jointShoppingGroupRequest, productImg)
+                () -> jointShoppingGroupApplicationService.updateGroup("userEmail", jointShoppingGroupNum, jointShoppingGroupRequest)
         );
     }
 

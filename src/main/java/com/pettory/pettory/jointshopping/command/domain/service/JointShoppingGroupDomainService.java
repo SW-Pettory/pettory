@@ -13,7 +13,6 @@ import com.pettory.pettory.user.command.domain.aggregate.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +24,10 @@ public class JointShoppingGroupDomainService {
     private final JointShoppingGroupRepository jointShoppingGroupRepository;
 
     /* 도메인 객체를 생성하는 로직 */
-    public JointShoppingGroup createGroup(JointShoppingGroupRequest groupRequest, MultipartFile productImg, User user, JointShoppingCategory JointShoppingCategory) {
-
-        /* 전달 된 파일을 서버의 지정 경로에 저장
-         * 파일이 없으면 저장 안함 */
-        String replaceFileName = null;
-        if (productImg != null) {
-            replaceFileName = IMAGE_DIR + FileUploadUtils.saveFile(IMAGE_DIR, productImg);
-        }
+    public JointShoppingGroup createGroup(JointShoppingGroupRequest groupRequest, User user, JointShoppingCategory JointShoppingCategory) {
 
         /* dto to entity */
-        JointShoppingGroup newJointShoppingGroup = JointShoppingGroupMapper.toEntity(groupRequest, replaceFileName, user, JointShoppingCategory);
+        JointShoppingGroup newJointShoppingGroup = JointShoppingGroupMapper.toEntity(groupRequest,user, JointShoppingCategory);
 
         return newJointShoppingGroup;
     }
@@ -46,7 +38,7 @@ public class JointShoppingGroupDomainService {
     }
 
     /* 도메인 객체를 수정하는 로직 */
-    public JointShoppingGroup updateGroup(Long jointShoppingGroupNum, @Valid JointShoppingGroupRequest groupRequest, MultipartFile productImg, User user, JointShoppingCategory jointShoppingCategory) {
+    public JointShoppingGroup updateGroup(Long jointShoppingGroupNum, JointShoppingGroupRequest groupRequest, User user, JointShoppingCategory jointShoppingCategory) {
 
         JointShoppingGroup jointShoppingGroup = jointShoppingGroupRepository.findById(jointShoppingGroupNum)
                 .orElseThrow(() -> new NotFoundException("해당 번호에 맞는 모임이 없습니다. code : " + jointShoppingGroupNum));
@@ -55,12 +47,6 @@ public class JointShoppingGroupDomainService {
             throw new BadJoinException("방장이 아니여서 수정하실 수 없습니다.");
         }
 
-        /* 이미지 수정이 필요할 경우 새로운 이미지 저장 후 기존 이미지 삭제 */
-        if (productImg != null) {
-            String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, productImg);
-            FileUploadUtils.deleteFile(IMAGE_DIR, jointShoppingGroup.getJointShoppingProductsFileDirectory().replace(IMAGE_DIR, ""));
-            jointShoppingGroup.changejointShoppingProductsFileDirectory(IMAGE_DIR + replaceFileName);
-        }
 
         /* 수정을 위해 엔터티 정보 변경 */
         jointShoppingGroup.update(
